@@ -206,6 +206,7 @@ type MoreProject = {
   description: string;
   tech: string[];
   status: string;
+  image?: string;
 }
 
 export default function GamePortfolio() {
@@ -462,7 +463,7 @@ export default function GamePortfolio() {
 
       {/* Tooltips */}
       <div className="fixed top-4 right-4 game-tooltip">
-        Level: {gameState.toUpperCase()}
+        Level: {String(gameState).toUpperCase()}
       </div>
 
       {/* Add scanlines effect */}
@@ -471,27 +472,24 @@ export default function GamePortfolio() {
       {/* START SCREEN */}
       {gameState === "start" && (
         <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center max-w-2xl mx-auto p-8">
-            <div className="mb-8">
+          <div className="text-center max-w-2xl w-full mx-auto p-4 sm:p-8 flex flex-col items-center justify-center">
+            <div className="mb-8 w-full">
               <div className="text-primary text-6xl mb-4 text-glow">◤◢◤◢◤◢◤◢◤◢</div>
               <h1 className="text-4xl md:text-6xl font-bold mb-4 text-primary text-glow backdrop-blur-sm">YUVRAJ.EXE</h1>
               <div className="text-xl text-secondary mb-2 text-glow">XR & GAME DEVELOPER</div>
               <div className="text-sm text-muted-foreground mb-8">ARCHITECTURE-XR-GAMEDEV-WEB3</div>
             </div>
-
-            <div className="space-y-4">
+            <div className="space-y-4 w-full flex flex-col items-center">
               <GameButton
                 onClick={() => setGameState("home")}
                 variant="primary"
                 keyHint="ENTER"
-                className="text-xl px-8 py-4 hover-lift"
+                className="text-xl px-8 py-4 hover-lift w-full max-w-xs"
               >
                 ▶ START GAME
               </GameButton>
-
-             
-
-            <div className="mt-8 text-primary text-sm text-glow">
+            </div>
+            <div className="mt-8 text-primary text-sm text-glow w-full text-center">
               PRESS [ENTER] TO BEGIN
             </div>
           </div>
@@ -506,7 +504,7 @@ export default function GamePortfolio() {
             <div className="flex items-center justify-between max-w-6xl mx-auto p-3">
               <div className="flex items-center space-x-4">
                 <div className="text-primary font-bold text-glow">PORTFOLIO.GAME</div>
-                <div className="text-xs text-muted-foreground">LEVEL: {gameState.toUpperCase()}</div>
+                <div className="text-xs text-muted-foreground">LEVEL: {String(gameState).toUpperCase()}</div>
                 <div className="status-indicator" />
               </div>
 
