@@ -192,6 +192,23 @@ function GameInventoryItem({ name, type, rarity }: { name: string; type: string;
   )
 }
 
+type Project = {
+  title: string;
+  description: string;
+  tech: string[];
+  status: string;
+  image: string;
+  demoUrl?: string;
+}
+
+type MoreProject = {
+  title: string;
+  description: string;
+  tech: string[];
+  status: string;
+  image?: string;
+}
+
 export default function GamePortfolio() {
   const [gameState, setGameState] = useState<GameState>("start")
   const [currentDialogue, setCurrentDialogue] = useState(0)
@@ -203,6 +220,13 @@ export default function GamePortfolio() {
     email: '',
     message: ''
   })
+  const [formErrors, setFormErrors] = useState({
+    name: '',
+    email: '',
+    message: ''
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [bgMusic] = useState(() => {
     if (typeof window !== 'undefined') {
       return new window.Audio("/assets/music/rizzlas-c418-224649.mp3");
@@ -264,7 +288,7 @@ export default function GamePortfolio() {
     return () => window.removeEventListener("keydown", handleKeyPress)
   }, [handleKeyPress])
 
-  const projects = {
+  const projects: Record<ProjectCategory, Project[]> = {
     architecture: [
       {
         title: "ArchDo",
@@ -320,7 +344,7 @@ export default function GamePortfolio() {
         description: "TerminalCraft is a humorous, interactive Minecraft-style terminal game for the web. Chat with a sassy version of Steve, who roasts you, triggers random Minecraft events, and responds to your commands in a retro terminal interface.",
         tech: ["React", "TensorFlow.js", "WebGL"],
         status: "COMPLETED",
-        image: "C:\Users\YUVRAJ\OneDrive\Desktop\game_logos\ChatGPT Image Jun 6, 2025, 01_03_42 AM.png",
+        image: "/assets/projects/terminalcraft.png",
       },
       {
         title: "Smart Home Hub",
@@ -346,7 +370,7 @@ export default function GamePortfolio() {
     ],
   }
 
-  const moreProjects = {
+  const moreProjects: Record<MoreProjectCategory, MoreProject[]> = {
     c: [
       {
         title: "Custom Memory Allocator",
@@ -439,7 +463,7 @@ export default function GamePortfolio() {
 
       {/* Tooltips */}
       <div className="fixed top-4 right-4 game-tooltip">
-        Level: HOME
+        Level: {gameState.toUpperCase()}
       </div>
 
       {/* Add scanlines effect */}
