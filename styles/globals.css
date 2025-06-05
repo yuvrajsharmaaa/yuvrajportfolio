@@ -1,0 +1,197 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ====== FONT IMPORTS ====== */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+@layer base {
+  :root {
+    --background: 240 30% 8%; /* #0E0D1C - Deep Navy/Black */
+    --foreground: 0 0% 93%; /* #EDEDED - Off White */
+    --card: 240 20% 18%; /* #1F1F2E - Dark Panel */
+    --card-foreground: 35 100% 50%; /* #FF8C00 - Retro Orange */
+    --popover: 240 20% 18%;
+    --popover-foreground: 35 100% 50%;
+    --primary: 35 100% 50%; /* #FF8C00 - Retro Orange */
+    --primary-foreground: 0 0% 100%; /* #FFFFFF - White */
+    --secondary: 280 100% 65%; /* #9A52FF - Purple */
+    --secondary-foreground: 0 0% 100%; /* #FFFFFF - White */
+    --muted: 240 20% 18%;
+    --muted-foreground: 35 100% 50%;
+    --accent: 170 100% 50%; /* #00FFC2 - Neon Green */
+    --accent-foreground: 0 0% 0%; /* #000000 - Black */
+    --neon-pink: 327 100% 60%; /* #FF3CAC - Neon Pink */
+    --destructive: 35 100% 50%; /* #F29F05 - Orange */
+    --destructive-foreground: 0 0% 0%; /* #000000 - Black */
+    --border: 35 100% 50%; /* #F29F05 - Orange */
+    --input: 240 20% 18%;
+    --ring: 35 100% 50%;
+    --radius: 0.25rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    margin: 0;
+    padding: 0;
+    background-image: 
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+      radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+      radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px, 40px 40px, 30px 30px;
+    background-position: 0 0, 10px 10px, 20px 20px;
+    image-rendering: pixelated;
+    font-family: 'VT323', monospace;
+    color: #FFD580; /* Retro glow text */
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: 'Press Start 2P', cursive;
+    color: #F29F05;
+    text-shadow: 0 0 6px #F29F05;
+  }
+
+  a {
+    color: #FF8C00;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-shadow: 0 0 4px #9A52FF;
+  }
+}
+
+@layer components {
+  .retro-button {
+    @apply font-['Press_Start_2P'] bg-primary text-primary-foreground border-2 border-destructive px-4 py-2 
+           shadow-[0_0_5px_theme(colors.primary.DEFAULT)] transition-all duration-200
+           hover:scale-105 hover:shadow-[0_0_10px_theme(colors.primary.DEFAULT)]
+           hover:bg-destructive hover:text-black;
+  }
+
+  .retro-panel {
+    @apply bg-card border-2 border-destructive text-foreground p-4 
+           shadow-[0_0_8px_theme(colors.primary.DEFAULT)] font-['VT323'];
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23F29F05' fill-opacity='0.1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .retro-text {
+    @apply font-['Press_Start_2P'] text-primary;
+  }
+
+  .retro-body {
+    @apply font-['VT323'] text-foreground;
+  }
+
+  .nav-menu {
+    @apply fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-sm border-b-2 border-destructive;
+    font-family: 'Press Start 2P', cursive;
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23F29F05' fill-opacity='0.1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .card-game {
+    @apply bg-card border-2 border-destructive text-foreground p-4 
+           shadow-[0_0_8px_theme(colors.primary.DEFAULT)] font-['VT323']
+           hover:border-primary transition-colors;
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23F29F05' fill-opacity='0.1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .dialogue-box {
+    @apply bg-card/95 backdrop-blur-sm border-2 border-destructive p-4 
+           shadow-[0_0_8px_theme(colors.primary.DEFAULT)] font-['VT323']
+           animate-typing overflow-hidden whitespace-nowrap border-r-2 border-primary animate-blink;
+    background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23F29F05' fill-opacity='0.1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .status-bar {
+    @apply h-2 bg-muted rounded-full overflow-hidden;
+  }
+
+  .status-bar-fill {
+    @apply h-full bg-primary transition-all duration-500;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 6px var(--primary);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #F29F05;
+  border-radius: 10px;
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes glow {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.2); }
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+@keyframes pixel-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.animate-typing {
+  animation: typing 2s steps(40) forwards;
+}
+
+.animate-blink {
+  animation: blink 0.75s step-end infinite;
+}
+
+.animate-pixel-flicker {
+  animation: pixel-flicker 0.5s ease-in-out infinite;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .retro-button {
+    @apply text-xs px-3 py-1;
+  }
+
+  .nav-menu {
+    @apply flex-wrap;
+  }
+
+  .retro-panel, .card-game {
+    @apply w-[90%];
+  }
+}
