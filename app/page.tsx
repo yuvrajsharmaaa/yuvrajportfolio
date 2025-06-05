@@ -12,25 +12,6 @@ type GameState = "start" | "home" | "about" | "projects" | "blogs" | "contact"
 type ProjectCategory = "architecture" | "software" | "games" | "more"
 type MoreProjectCategory = "c" | "cpp" | "python" | "fullstack"
 
-// Sound effects
-const playSound = (type: "click" | "hover" | "success") => {
-  if (typeof window === 'undefined') return;
-  const audio = new window.Audio();
-  switch (type) {
-    case "click":
-      audio.src = "/assets/sfx/click.mp3";
-      break;
-    case "hover":
-      audio.src = "/assets/sfx/hover.mp3";
-      break;
-    case "success":
-      audio.src = "/assets/sfx/success.mp3";
-      break;
-  }
-  audio.volume = 0.2;
-  audio.play().catch(() => {}); // Ignore autoplay restrictions
-}
-
 // Pixel art avatar component
 function PixelAvatar({ mood = "neutral" }: { mood?: "neutral" | "happy" | "thinking" }) {
   return (
@@ -86,10 +67,8 @@ function GameButton({
   return (
     <button
       onClick={() => {
-        playSound("click")
         onClick()
       }}
-      onMouseEnter={() => playSound("hover")}
       className={`rpg-button ${className}`}
     >
       <div className="flex items-center justify-center gap-2">
@@ -227,66 +206,12 @@ export default function GamePortfolio() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
-  const [bgMusic] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return new window.Audio("/assets/music/rizzlas-c418-224649.mp3");
-    }
-    return null;
-  })
   const [achievements, setAchievements] = useState([
     { title: "First Project", description: "Completed your first project", icon: "🏆" },
     { title: "Tech Explorer", description: "Mastered multiple technologies", icon: "🔮" },
     { title: "Game Developer", description: "Created your first game", icon: "🎮" },
   ])
-
-  // Background music control
-  useEffect(() => {
-    if (!bgMusic) return;
-    bgMusic.loop = true;
-    bgMusic.volume = 0.3;
-    if (!isMuted) {
-      bgMusic.play().catch(() => {});
-    }
-    return () => bgMusic.pause();
-  }, [isMuted, bgMusic]);
-
-  // Keyboard navigation
-  const handleKeyPress = useCallback(
-    (event: KeyboardEvent) => {
-      switch (event.key.toLowerCase()) {
-        case "enter":
-        case " ":
-          if (gameState === "start") setGameState("home")
-          break
-        case "h":
-          setGameState("home")
-          break
-        case "t":
-        case "tab":
-          event.preventDefault()
-          setGameState("about")
-          break
-        case "q":
-          setGameState("projects")
-          break
-        case "b":
-          setGameState("blogs")
-          break
-        case "c":
-          setGameState("contact")
-          break
-        case "escape":
-          setGameState("home")
-          break
-      }
-    },
-    [gameState],
-  )
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyPress)
-    return () => window.removeEventListener("keydown", handleKeyPress)
-  }, [handleKeyPress])
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const projects: Record<ProjectCategory, Project[]> = {
     architecture: [
@@ -452,15 +377,6 @@ export default function GamePortfolio() {
         <div className="shooting-star"></div>
       </div>
 
-      {/* Sound Control */}
-      <button
-        className="sound-control"
-        onClick={() => setIsMuted(!isMuted)}
-        title={isMuted ? "Unmute" : "Mute"}
-      >
-        {isMuted ? "🔇" : "🔊"}
-      </button>
-
       {/* Tooltips */}
       <div className="fixed top-4 right-4 game-tooltip">
         Level: {gameState.toUpperCase()}
@@ -506,31 +422,35 @@ export default function GamePortfolio() {
       {gameState !== "start" && (
         <div className="min-h-screen">
           {/* Game HUD */}
-          <div className="nav-menu">
-            <div className="flex items-center justify-between max-w-6xl mx-auto p-3">
+          <div className="nav-menu relative">
+            <div className="flex items-center justify-between max-w-6xl mx-auto p-3 w-full">
               <div className="flex items-center space-x-4">
                 <div className="text-primary font-bold text-glow">PORTFOLIO.GAME</div>
                 <div className="text-xs text-muted-foreground">LEVEL: {gameState.toUpperCase()}</div>
                 <div className="status-indicator" />
               </div>
-
-              <div className="flex space-x-2">
-                <GameButton onClick={() => setGameState("home")} variant="secondary" keyHint="H">
-                  HOME
-                </GameButton>
-                <GameButton onClick={() => setGameState("about")} variant="secondary" keyHint="T">
-                  ABOUT
-                </GameButton>
-                <GameButton onClick={() => setGameState("projects")} variant="secondary" keyHint="Q">
-                  PROJECTS
-                </GameButton>
-                <GameButton onClick={() => setGameState("blogs")} variant="secondary" keyHint="B">
-                  BLOGS
-                </GameButton>
-                <GameButton onClick={() => setGameState("contact")} variant="secondary" keyHint="C">
-                  CONTACT
-                </GameButton>
+              {/* Hamburger for mobile */}
+              <div className="hamburger" onClick={() => setMobileNavOpen(!mobileNavOpen)}>
+                <span></span>
+                <span></span>
+                <span></span>
               </div>
+              {/* Desktop nav */}
+              <div className="flex space-x-2 hidden md:flex">
+                <GameButton onClick={() => setGameState("home")} variant="secondary" keyHint="H">HOME</GameButton>
+                <GameButton onClick={() => setGameState("about")} variant="secondary" keyHint="T">ABOUT</GameButton>
+                <GameButton onClick={() => setGameState("projects")} variant="secondary" keyHint="Q">PROJECTS</GameButton>
+                <GameButton onClick={() => setGameState("blogs")} variant="secondary" keyHint="B">BLOGS</GameButton>
+                <GameButton onClick={() => setGameState("contact")} variant="secondary" keyHint="C">CONTACT</GameButton>
+              </div>
+            </div>
+            {/* Mobile nav dropdown */}
+            <div className={`mobile-nav ${mobileNavOpen ? "open" : ""} md:hidden w-full px-2`}> 
+              <GameButton onClick={() => { setGameState("home"); setMobileNavOpen(false); }} variant="secondary" keyHint="H">HOME</GameButton>
+              <GameButton onClick={() => { setGameState("about"); setMobileNavOpen(false); }} variant="secondary" keyHint="T">ABOUT</GameButton>
+              <GameButton onClick={() => { setGameState("projects"); setMobileNavOpen(false); }} variant="secondary" keyHint="Q">PROJECTS</GameButton>
+              <GameButton onClick={() => { setGameState("blogs"); setMobileNavOpen(false); }} variant="secondary" keyHint="B">BLOGS</GameButton>
+              <GameButton onClick={() => { setGameState("contact"); setMobileNavOpen(false); }} variant="secondary" keyHint="C">CONTACT</GameButton>
             </div>
           </div>
 
