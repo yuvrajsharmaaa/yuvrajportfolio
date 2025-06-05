@@ -12,25 +12,6 @@ type GameState = "start" | "home" | "about" | "projects" | "blogs" | "contact"
 type ProjectCategory = "architecture" | "software" | "games" | "more"
 type MoreProjectCategory = "c" | "cpp" | "python" | "fullstack"
 
-// Sound effects
-const playSound = (type: "click" | "hover" | "success") => {
-  if (typeof window === 'undefined') return;
-  const audio = new window.Audio();
-  switch (type) {
-    case "click":
-      audio.src = "/assets/sfx/click.mp3";
-      break;
-    case "hover":
-      audio.src = "/assets/sfx/hover.mp3";
-      break;
-    case "success":
-      audio.src = "/assets/sfx/success.mp3";
-      break;
-  }
-  audio.volume = 0.2;
-  audio.play().catch(() => {}); // Ignore autoplay restrictions
-}
-
 // Pixel art avatar component
 function PixelAvatar({ mood = "neutral" }: { mood?: "neutral" | "happy" | "thinking" }) {
   return (
@@ -86,10 +67,8 @@ function GameButton({
   return (
     <button
       onClick={() => {
-        playSound("click")
         onClick()
       }}
-      onMouseEnter={() => playSound("hover")}
       className={`rpg-button ${className}`}
     >
       <div className="flex items-center justify-center gap-2">
@@ -214,7 +193,6 @@ export default function GamePortfolio() {
   const [currentDialogue, setCurrentDialogue] = useState(0)
   const [selectedProject, setSelectedProject] = useState<ProjectCategory>("architecture")
   const [selectedMoreProject, setSelectedMoreProject] = useState<MoreProjectCategory>("python")
-  const [isMuted, setIsMuted] = useState(true)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -227,66 +205,6 @@ export default function GamePortfolio() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
-  const [bgMusic] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return new window.Audio("/assets/music/rizzlas-c418-224649.mp3");
-    }
-    return null;
-  })
-  const [achievements, setAchievements] = useState([
-    { title: "First Project", description: "Completed your first project", icon: "🏆" },
-    { title: "Tech Explorer", description: "Mastered multiple technologies", icon: "🔮" },
-    { title: "Game Developer", description: "Created your first game", icon: "🎮" },
-  ])
-
-  // Background music control
-  useEffect(() => {
-    if (!bgMusic) return;
-    bgMusic.loop = true;
-    bgMusic.volume = 0.3;
-    if (!isMuted) {
-      bgMusic.play().catch(() => {});
-    }
-    return () => bgMusic.pause();
-  }, [isMuted, bgMusic]);
-
-  // Keyboard navigation
-  const handleKeyPress = useCallback(
-    (event: KeyboardEvent) => {
-      switch (event.key.toLowerCase()) {
-        case "enter":
-        case " ":
-          if (gameState === "start") setGameState("home")
-          break
-        case "h":
-          setGameState("home")
-          break
-        case "t":
-        case "tab":
-          event.preventDefault()
-          setGameState("about")
-          break
-        case "q":
-          setGameState("projects")
-          break
-        case "b":
-          setGameState("blogs")
-          break
-        case "c":
-          setGameState("contact")
-          break
-        case "escape":
-          setGameState("home")
-          break
-      }
-    },
-    [gameState],
-  )
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyPress)
-    return () => window.removeEventListener("keydown", handleKeyPress)
-  }, [handleKeyPress])
 
   const projects: Record<ProjectCategory, Project[]> = {
     architecture: [
@@ -451,15 +369,6 @@ export default function GamePortfolio() {
         <div className="shooting-star"></div>
         <div className="shooting-star"></div>
       </div>
-
-      {/* Sound Control */}
-      <button
-        className="sound-control"
-        onClick={() => setIsMuted(!isMuted)}
-        title={isMuted ? "Unmute" : "Mute"}
-      >
-        {isMuted ? "🔇" : "🔊"}
-      </button>
 
       {/* Tooltips */}
       <div className="fixed top-4 right-4 game-tooltip">
