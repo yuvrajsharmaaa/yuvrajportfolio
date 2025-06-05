@@ -489,9 +489,6 @@ export default function GamePortfolio() {
                 ▶ START GAME
               </GameButton>
             </div>
-            <div className="mt-8 text-primary text-sm text-glow w-full text-center">
-              PRESS [ENTER] TO BEGIN
-            </div>
           </div>
         </div>
       )}
