@@ -360,7 +360,7 @@ export default function GamePortfolio() {
     ],
   }
 
-  const mobileNavButtonClass = "rounded-xl bg-background/80 shadow-lg border border-primary/40 px-4 py-3 my-1 text-lg font-bold flex items-center justify-center transition-all duration-200 active:scale-95 hover:bg-primary/10";
+  const modernNavButtonClass = "rounded-full bg-white/90 text-primary font-semibold px-5 py-2 shadow-md hover:bg-primary hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 w-full text-base flex items-center justify-center gap-2";
 
   return (
     <div className="min-h-screen p-4 md:p-8">
@@ -409,56 +409,46 @@ export default function GamePortfolio() {
       {gameState !== "start" && (
         <div className="min-h-screen">
           {/* Game HUD */}
-          <div className="nav-menu z-50 relative">
-            <div className="flex items-center justify-between max-w-6xl mx-auto p-3">
-              <div className="flex items-center space-x-4">
-                <div className="text-primary font-bold text-glow">PORTFOLIO.GAME</div>
-                <div className="text-xs text-muted-foreground hidden sm:block">LEVEL: {String(gameState).toUpperCase()}</div>
-                <div className="status-indicator" />
-              </div>
+          <nav className="z-50 relative w-full">
+            <div className="flex items-center justify-between max-w-5xl mx-auto py-3 px-4 md:px-0">
+              <div className="text-primary font-extrabold text-2xl tracking-tight select-none">PORTFOLIO.GAME</div>
               {/* Desktop Navigation */}
-              <div className="hidden md:flex space-x-2">
-                <GameButton onClick={() => setGameState("home")} variant="secondary" keyHint="H">HOME</GameButton>
-                <GameButton onClick={() => setGameState("about")} variant="secondary" keyHint="T">ABOUT</GameButton>
-                <GameButton onClick={() => setGameState("projects")} variant="secondary" keyHint="Q">PROJECTS</GameButton>
-                <GameButton onClick={() => setGameState("blogs")} variant="secondary" keyHint="B">BLOGS</GameButton>
-                <GameButton onClick={() => setGameState("contact")} variant="secondary" keyHint="C">CONTACT</GameButton>
+              <div className="hidden md:flex gap-3 items-center">
+                <button onClick={() => setGameState('home')} className={modernNavButtonClass}>Home</button>
+                <button onClick={() => setGameState('about')} className={modernNavButtonClass}>About</button>
+                <button onClick={() => setGameState('projects')} className={modernNavButtonClass}>Projects</button>
+                <button onClick={() => setGameState('blogs')} className={modernNavButtonClass}>Blogs</button>
+                <button onClick={() => setGameState('contact')} className={modernNavButtonClass}>Contact</button>
               </div>
-              {/* Mobile Navigation Button */}
-              <button 
+              {/* Mobile Hamburger */}
+              <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden rpg-button p-2 bg-primary/80 rounded-xl shadow-lg border border-primary/40"
+                className="md:hidden flex items-center justify-center w-11 h-11 rounded-full bg-white/90 shadow-md focus:outline-none focus:ring-2 focus:ring-primary/50"
                 aria-label="Open navigation menu"
               >
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="28" 
-                  height="28" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                >
-                  <line x1="3" y1="12" x2="21" y2="12"></line>
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <line x1="3" y1="18" x2="21" y2="18"></line>
+                <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
                 </svg>
               </button>
             </div>
-            {/* Mobile Navigation Menu */}
-            <div className={`md:hidden fixed top-0 left-0 w-full h-full bg-background/95 backdrop-blur-lg z-50 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-              <div className="flex flex-col items-center justify-center h-full gap-2">
-                <GameButton onClick={() => {setGameState("home"); setIsMobileMenuOpen(false)}} className={mobileNavButtonClass} keyHint="H">HOME</GameButton>
-                <GameButton onClick={() => {setGameState("about"); setIsMobileMenuOpen(false)}} className={mobileNavButtonClass} keyHint="T">ABOUT</GameButton>
-                <GameButton onClick={() => {setGameState("projects"); setIsMobileMenuOpen(false)}} className={mobileNavButtonClass} keyHint="Q">PROJECTS</GameButton>
-                <GameButton onClick={() => {setGameState("blogs"); setIsMobileMenuOpen(false)}} className={mobileNavButtonClass} keyHint="B">BLOGS</GameButton>
-                <GameButton onClick={() => {setGameState("contact"); setIsMobileMenuOpen(false)}} className={mobileNavButtonClass} keyHint="C">CONTACT</GameButton>
-                <button onClick={() => setIsMobileMenuOpen(false)} className="mt-8 text-xs text-muted-foreground underline">Close Menu</button>
+            {/* Mobile Drawer */}
+            <div className={`fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <div className={`absolute top-0 right-0 w-4/5 max-w-xs h-full bg-white shadow-2xl flex flex-col gap-4 p-6 transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
+                onClick={e => e.stopPropagation()}
+              >
+                <button onClick={() => { setGameState('home'); setIsMobileMenuOpen(false); }} className={modernNavButtonClass}>Home</button>
+                <button onClick={() => { setGameState('about'); setIsMobileMenuOpen(false); }} className={modernNavButtonClass}>About</button>
+                <button onClick={() => { setGameState('projects'); setIsMobileMenuOpen(false); }} className={modernNavButtonClass}>Projects</button>
+                <button onClick={() => { setGameState('blogs'); setIsMobileMenuOpen(false); }} className={modernNavButtonClass}>Blogs</button>
+                <button onClick={() => { setGameState('contact'); setIsMobileMenuOpen(false); }} className={modernNavButtonClass}>Contact</button>
+                <button onClick={() => setIsMobileMenuOpen(false)} className="mt-8 text-xs text-muted-foreground underline">Close</button>
               </div>
             </div>
-          </div>
+          </nav>
 
           {/* GAME CONTENT */}
           <div className="pt-20 min-h-screen">
