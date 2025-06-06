@@ -360,6 +360,8 @@ export default function GamePortfolio() {
     ],
   }
 
+  const mobileNavButtonClass = "rounded-xl bg-background/80 shadow-lg border border-primary/40 px-4 py-3 my-1 text-lg font-bold flex items-center justify-center transition-all duration-200 active:scale-95 hover:bg-primary/10";
+
   return (
     <div className="min-h-screen p-4 md:p-8">
       {/* Starry Background */}
@@ -407,42 +409,31 @@ export default function GamePortfolio() {
       {gameState !== "start" && (
         <div className="min-h-screen">
           {/* Game HUD */}
-          <div className="nav-menu">
+          <div className="nav-menu z-50 relative">
             <div className="flex items-center justify-between max-w-6xl mx-auto p-3">
               <div className="flex items-center space-x-4">
                 <div className="text-primary font-bold text-glow">PORTFOLIO.GAME</div>
                 <div className="text-xs text-muted-foreground hidden sm:block">LEVEL: {String(gameState).toUpperCase()}</div>
                 <div className="status-indicator" />
               </div>
-
               {/* Desktop Navigation */}
               <div className="hidden md:flex space-x-2">
-                <GameButton onClick={() => setGameState("home")} variant="secondary" keyHint="H">
-                  HOME
-                </GameButton>
-                <GameButton onClick={() => setGameState("about")} variant="secondary" keyHint="T">
-                  ABOUT
-                </GameButton>
-                <GameButton onClick={() => setGameState("projects")} variant="secondary" keyHint="Q">
-                  PROJECTS
-                </GameButton>
-                <GameButton onClick={() => setGameState("blogs")} variant="secondary" keyHint="B">
-                  BLOGS
-                </GameButton>
-                <GameButton onClick={() => setGameState("contact")} variant="secondary" keyHint="C">
-                  CONTACT
-                </GameButton>
+                <GameButton onClick={() => setGameState("home")} variant="secondary" keyHint="H">HOME</GameButton>
+                <GameButton onClick={() => setGameState("about")} variant="secondary" keyHint="T">ABOUT</GameButton>
+                <GameButton onClick={() => setGameState("projects")} variant="secondary" keyHint="Q">PROJECTS</GameButton>
+                <GameButton onClick={() => setGameState("blogs")} variant="secondary" keyHint="B">BLOGS</GameButton>
+                <GameButton onClick={() => setGameState("contact")} variant="secondary" keyHint="C">CONTACT</GameButton>
               </div>
-
               {/* Mobile Navigation Button */}
               <button 
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden rpg-button p-2"
+                className="md:hidden rpg-button p-2 bg-primary/80 rounded-xl shadow-lg border border-primary/40"
+                aria-label="Open navigation menu"
               >
                 <svg 
                   xmlns="http://www.w3.org/2000/svg" 
-                  width="24" 
-                  height="24" 
+                  width="28" 
+                  height="28" 
                   viewBox="0 0 24 24" 
                   fill="none" 
                   stroke="currentColor" 
@@ -456,25 +447,15 @@ export default function GamePortfolio() {
                 </svg>
               </button>
             </div>
-
             {/* Mobile Navigation Menu */}
-            <div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'} bg-background/95 backdrop-blur-sm border-t border-primary/20`}>
-              <div className="flex flex-col space-y-1 p-2">
-                <GameButton onClick={() => {setGameState("home"); setIsMobileMenuOpen(false)}} variant="secondary" keyHint="H">
-                  HOME
-                </GameButton>
-                <GameButton onClick={() => {setGameState("about"); setIsMobileMenuOpen(false)}} variant="secondary" keyHint="T">
-                  ABOUT
-                </GameButton>
-                <GameButton onClick={() => {setGameState("projects"); setIsMobileMenuOpen(false)}} variant="secondary" keyHint="Q">
-                  PROJECTS
-                </GameButton>
-                <GameButton onClick={() => {setGameState("blogs"); setIsMobileMenuOpen(false)}} variant="secondary" keyHint="B">
-                  BLOGS
-                </GameButton>
-                <GameButton onClick={() => {setGameState("contact"); setIsMobileMenuOpen(false)}} variant="secondary" keyHint="C">
-                  CONTACT
-                </GameButton>
+            <div className={`md:hidden fixed top-0 left-0 w-full h-full bg-background/95 backdrop-blur-lg z-50 transition-all duration-300 ${isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+              <div className="flex flex-col items-center justify-center h-full gap-2">
+                <GameButton onClick={() => {setGameState("home"); setIsMobileMenuOpen(false)}} className={mobileNavButtonClass} keyHint="H">HOME</GameButton>
+                <GameButton onClick={() => {setGameState("about"); setIsMobileMenuOpen(false)}} className={mobileNavButtonClass} keyHint="T">ABOUT</GameButton>
+                <GameButton onClick={() => {setGameState("projects"); setIsMobileMenuOpen(false)}} className={mobileNavButtonClass} keyHint="Q">PROJECTS</GameButton>
+                <GameButton onClick={() => {setGameState("blogs"); setIsMobileMenuOpen(false)}} className={mobileNavButtonClass} keyHint="B">BLOGS</GameButton>
+                <GameButton onClick={() => {setGameState("contact"); setIsMobileMenuOpen(false)}} className={mobileNavButtonClass} keyHint="C">CONTACT</GameButton>
+                <button onClick={() => setIsMobileMenuOpen(false)} className="mt-8 text-xs text-muted-foreground underline">Close Menu</button>
               </div>
             </div>
           </div>
@@ -659,7 +640,7 @@ export default function GamePortfolio() {
                 <div className="mt-12 text-center">
                   <DialogueBox
                     character="SYSTEM"
-                    message="This hybrid class combination allows for unique problem-solving approaches, bridging physical and digital design methodologies."
+                    message={`PLAYER PROFILE:\nClass: Hybrid Explorer\nTraits: Curious, Builder, Dreamer\n---\n"Euphoria isn't a big revelation. It's the quiet joy of building, learning, and imagining new worlds.\nDrawn to XR, games, and tech by curiosity and hands-on play.\nOffline: VR diving, hackathons, lifting, or binge-watching building breakdowns.\nBelieves in: Collaborate, create, leave a mark.\nIf our quests align, let's team up and make something legendary."`}
                     showNext={false}
                   />
                 </div>
