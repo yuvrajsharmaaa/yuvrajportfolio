@@ -360,7 +360,7 @@ export default function GamePortfolio() {
     ],
   }
 
-  const modernNavButtonClass = "rounded-full bg-white/90 text-primary font-semibold px-5 py-2 shadow-md hover:bg-primary hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 w-full text-base flex items-center justify-center gap-2";
+  const modernNavButtonClass = "rounded-full bg-background/90 text-primary font-semibold px-5 py-2 shadow-md hover:bg-primary hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 w-full text-base flex items-center justify-center gap-2";
 
   return (
     <div className="min-h-screen p-4 md:p-8">
@@ -423,7 +423,7 @@ export default function GamePortfolio() {
               {/* Mobile Hamburger */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden flex items-center justify-center w-11 h-11 rounded-full bg-white/90 shadow-md focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="md:hidden flex items-center justify-center w-11 h-11 rounded-full bg-background/90 shadow-md focus:outline-none focus:ring-2 focus:ring-primary/50"
                 aria-label="Open navigation menu"
               >
                 <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
@@ -434,18 +434,61 @@ export default function GamePortfolio() {
               </button>
             </div>
             {/* Mobile Drawer */}
-            <div className={`fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+            <div 
+              className={`fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-all duration-300 ease-in-out ${
+                isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+              }`}
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              <div className={`absolute top-0 right-0 w-4/5 max-w-xs h-full bg-white shadow-2xl flex flex-col justify-center gap-6 p-8 transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
+              <div 
+                className={`absolute top-0 right-0 w-full h-full bg-background/95 shadow-2xl flex flex-col justify-center gap-6 p-8 transition-transform duration-300 ease-in-out ${
+                  isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+                }`}
                 onClick={e => e.stopPropagation()}
               >
-                <button onClick={() => { setGameState('home'); setIsMobileMenuOpen(false); }} className={modernNavButtonClass}>Home</button>
-                <button onClick={() => { setGameState('about'); setIsMobileMenuOpen(false); }} className={modernNavButtonClass}>About</button>
-                <button onClick={() => { setGameState('projects'); setIsMobileMenuOpen(false); }} className={modernNavButtonClass}>Projects</button>
-                <button onClick={() => { setGameState('blogs'); setIsMobileMenuOpen(false); }} className={modernNavButtonClass}>Blogs</button>
-                <button onClick={() => { setGameState('contact'); setIsMobileMenuOpen(false); }} className={modernNavButtonClass}>Contact</button>
-                <button onClick={() => setIsMobileMenuOpen(false)} className="mt-8 text-xs text-muted-foreground underline">Close</button>
+                <div className="flex justify-end mb-4">
+                  <button 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-primary hover:text-primary/80 transition-colors"
+                  >
+                    <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="space-y-4">
+                  <button 
+                    onClick={() => { setGameState('home'); setIsMobileMenuOpen(false); }} 
+                    className={`${modernNavButtonClass} transform hover:scale-105 transition-transform`}
+                  >
+                    Home
+                  </button>
+                  <button 
+                    onClick={() => { setGameState('about'); setIsMobileMenuOpen(false); }} 
+                    className={`${modernNavButtonClass} transform hover:scale-105 transition-transform`}
+                  >
+                    About
+                  </button>
+                  <button 
+                    onClick={() => { setGameState('projects'); setIsMobileMenuOpen(false); }} 
+                    className={`${modernNavButtonClass} transform hover:scale-105 transition-transform`}
+                  >
+                    Projects
+                  </button>
+                  <button 
+                    onClick={() => { setGameState('blogs'); setIsMobileMenuOpen(false); }} 
+                    className={`${modernNavButtonClass} transform hover:scale-105 transition-transform`}
+                  >
+                    Blogs
+                  </button>
+                  <button 
+                    onClick={() => { setGameState('contact'); setIsMobileMenuOpen(false); }} 
+                    className={`${modernNavButtonClass} transform hover:scale-105 transition-transform`}
+                  >
+                    Contact
+                  </button>
+                </div>
               </div>
             </div>
           </nav>
