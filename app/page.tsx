@@ -360,7 +360,8 @@ export default function GamePortfolio() {
     ],
   }
 
-  const modernNavButtonClass = "rounded-lg bg-[#18181b] text-primary font-semibold px-4 py-2 shadow border border-primary/30 hover:bg-primary hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 w-full text-base flex items-center justify-center gap-2";
+  // Modern, small, pill-style nav button for mobile
+  const modernNavButtonClass = "rounded-full bg-[#23232a] text-primary font-semibold px-4 py-2 shadow-sm border border-primary/20 hover:bg-primary hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/40 w-full text-base flex items-center justify-center gap-2";
 
   return (
     <div className="min-h-screen p-4 md:p-8">
@@ -423,7 +424,7 @@ export default function GamePortfolio() {
               {/* Mobile Hamburger */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden flex items-center justify-center w-11 h-11 rounded-full bg-[#18181b] shadow-md focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="md:hidden flex items-center justify-center w-11 h-11 rounded-full bg-[#23232a] shadow focus:outline-none focus:ring-2 focus:ring-primary/50"
                 aria-label="Open navigation menu"
               >
                 <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
@@ -435,20 +436,20 @@ export default function GamePortfolio() {
             </div>
             {/* Mobile Drawer */}
             <div 
-              className={`fixed inset-0 z-50 bg-black/80 backdrop-blur-sm transition-all duration-300 ease-in-out ${
+              className={`fixed inset-0 z-50 bg-black/90 backdrop-blur-sm transition-all duration-300 ease-in-out ${
                 isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
               } flex items-center justify-center`}
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <div 
-                className={`relative w-11/12 max-w-xs mx-auto bg-[#18181b] rounded-xl shadow-2xl flex flex-col items-center justify-center gap-3 p-6 transition-transform duration-300 ease-in-out ${
+                className={`relative w-11/12 max-w-xs mx-auto bg-[#18181b] rounded-2xl shadow-2xl flex flex-col items-center justify-center gap-2 pt-8 pb-6 px-4 transition-transform duration-300 ease-in-out ${
                   isMobileMenuOpen ? 'translate-y-0' : '-translate-y-10'
                 }`}
                 onClick={e => e.stopPropagation()}
               >
                 <button 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="absolute top-3 right-3 text-primary hover:text-primary/80 transition-colors p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50 bg-[#18181b] shadow"
+                  className="absolute top-3 right-3 text-primary hover:text-primary/80 transition-colors p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50 bg-[#23232a] shadow"
                   aria-label="Close navigation menu"
                 >
                   <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
@@ -456,36 +457,38 @@ export default function GamePortfolio() {
                     <line x1="6" y1="6" x2="18" y2="18" />
                   </svg>
                 </button>
-                <button 
-                  onClick={() => { setGameState('home'); setIsMobileMenuOpen(false); }} 
-                  className={`${modernNavButtonClass} text-lg py-2`}
-                >
-                  Home
-                </button>
-                <button 
-                  onClick={() => { setGameState('about'); setIsMobileMenuOpen(false); }} 
-                  className={`${modernNavButtonClass} text-lg py-2`}
-                >
-                  About
-                </button>
-                <button 
-                  onClick={() => { setGameState('projects'); setIsMobileMenuOpen(false); }} 
-                  className={`${modernNavButtonClass} text-lg py-2`}
-                >
-                  Projects
-                </button>
-                <button 
-                  onClick={() => { setGameState('blogs'); setIsMobileMenuOpen(false); }} 
-                  className={`${modernNavButtonClass} text-lg py-2`}
-                >
-                  Blogs
-                </button>
-                <button 
-                  onClick={() => { setGameState('contact'); setIsMobileMenuOpen(false); }} 
-                  className={`${modernNavButtonClass} text-lg py-2`}
-                >
-                  Contact
-                </button>
+                <div className="w-full flex flex-col gap-2 mt-2">
+                  <button 
+                    onClick={() => { setGameState('home'); setIsMobileMenuOpen(false); }} 
+                    className={`${modernNavButtonClass} text-base py-2`}
+                  >
+                    Home
+                  </button>
+                  <button 
+                    onClick={() => { setGameState('about'); setIsMobileMenuOpen(false); }} 
+                    className={`${modernNavButtonClass} text-base py-2`}
+                  >
+                    About
+                  </button>
+                  <button 
+                    onClick={() => { setGameState('projects'); setIsMobileMenuOpen(false); }} 
+                    className={`${modernNavButtonClass} text-base py-2`}
+                  >
+                    Projects
+                  </button>
+                  <button 
+                    onClick={() => { setGameState('blogs'); setIsMobileMenuOpen(false); }} 
+                    className={`${modernNavButtonClass} text-base py-2`}
+                  >
+                    Blogs
+                  </button>
+                  <button 
+                    onClick={() => { setGameState('contact'); setIsMobileMenuOpen(false); }} 
+                    className={`${modernNavButtonClass} text-base py-2`}
+                  >
+                    Contact
+                  </button>
+                </div>
               </div>
             </div>
           </nav>
