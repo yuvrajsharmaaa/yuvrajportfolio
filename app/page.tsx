@@ -360,7 +360,7 @@ export default function GamePortfolio() {
     ],
   }
 
-  const modernNavButtonClass = "rounded-lg bg-background text-primary font-semibold px-4 py-2 shadow border border-primary/30 hover:bg-primary hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 w-full text-base flex items-center justify-center gap-2";
+  const modernNavButtonClass = "rounded-lg bg-[#18181b] text-primary font-semibold px-4 py-2 shadow border border-primary/30 hover:bg-primary hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50 w-full text-base flex items-center justify-center gap-2";
 
   return (
     <div className="min-h-screen p-4 md:p-8">
@@ -423,7 +423,7 @@ export default function GamePortfolio() {
               {/* Mobile Hamburger */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden flex items-center justify-center w-11 h-11 rounded-full bg-background/90 shadow-md focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="md:hidden flex items-center justify-center w-11 h-11 rounded-full bg-[#18181b] shadow-md focus:outline-none focus:ring-2 focus:ring-primary/50"
                 aria-label="Open navigation menu"
               >
                 <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
@@ -435,20 +435,20 @@ export default function GamePortfolio() {
             </div>
             {/* Mobile Drawer */}
             <div 
-              className={`fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-all duration-300 ease-in-out ${
+              className={`fixed inset-0 z-50 bg-black/80 backdrop-blur-sm transition-all duration-300 ease-in-out ${
                 isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
               } flex items-center justify-center`}
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <div 
-                className={`relative w-11/12 max-w-xs mx-auto bg-background rounded-xl shadow-2xl flex flex-col items-center justify-center gap-3 p-6 transition-transform duration-300 ease-in-out ${
+                className={`relative w-11/12 max-w-xs mx-auto bg-[#18181b] rounded-xl shadow-2xl flex flex-col items-center justify-center gap-3 p-6 transition-transform duration-300 ease-in-out ${
                   isMobileMenuOpen ? 'translate-y-0' : '-translate-y-10'
                 }`}
                 onClick={e => e.stopPropagation()}
               >
                 <button 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="absolute top-3 right-3 text-primary hover:text-primary/80 transition-colors p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background shadow"
+                  className="absolute top-3 right-3 text-primary hover:text-primary/80 transition-colors p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50 bg-[#18181b] shadow"
                   aria-label="Close navigation menu"
                 >
                   <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
@@ -589,7 +589,6 @@ export default function GamePortfolio() {
                 <div className="text-center mb-12">
                   <h2 className="text-3xl font-bold text-primary mb-4">CHARACTER_PROFILE.DAT</h2>
                 </div>
-
                 <div className="grid lg:grid-cols-3 gap-8">
                   {/* XR Developer Class */}
                   <Card className="card-game">
@@ -603,19 +602,9 @@ export default function GamePortfolio() {
                       <div className="text-foreground">
                         Specialized in creating immersive AR/VR experiences that bridge the gap between physical and digital worlds.
                       </div>
-                      <div className="space-y-1">
-                        <div className="text-primary">ABILITIES:</div>
-                        <div className="text-xs space-y-1">
-                          <div>• AR Development ████████░░</div>
-                          <div>• VR Experiences ███████░░░</div>
-                          <div>• Unity/Unreal ████████░░</div>
-                          <div>• 3D Modeling ██████░░░░</div>
-                        </div>
-                      </div>
                       <div className="text-xs text-muted-foreground">TOOLS: Unity, Unreal Engine, ARKit, ARCore</div>
                     </CardContent>
                   </Card>
-
                   {/* Game Developer Class */}
                   <Card className="card-game">
                     <CardHeader>
@@ -628,19 +617,9 @@ export default function GamePortfolio() {
                       <div className="text-foreground">
                         Creating engaging game experiences that combine storytelling with technical innovation.
                       </div>
-                      <div className="space-y-1">
-                        <div className="text-secondary">ABILITIES:</div>
-                        <div className="text-xs space-y-1">
-                          <div>• Game Design ██████░░░░</div>
-                          <div>• Unity/Godot ███████░░░</div>
-                          <div>• C++/C# ████████░░</div>
-                          <div>• UI/UX ███████░░░</div>
-                        </div>
-                      </div>
                       <div className="text-xs text-muted-foreground">ENGINES: Unity, Godot, Custom Engines</div>
                     </CardContent>
                   </Card>
-
                   {/* Tech Explorer Class */}
                   <Card className="card-game">
                     <CardHeader>
@@ -653,20 +632,10 @@ export default function GamePortfolio() {
                       <div className="text-foreground">
                         Exploring the intersection of emerging technologies and creative expression.
                       </div>
-                      <div className="space-y-1">
-                        <div className="text-accent">ABILITIES:</div>
-                        <div className="text-xs space-y-1">
-                          <div>• Web3 ██████░░░░</div>
-                          <div>• AI/ML ██████░░░░</div>
-                          <div>• Python ████████░░</div>
-                          <div>• Blockchain ██████░░░░</div>
-                        </div>
-                      </div>
                       <div className="text-xs text-muted-foreground">TECH: Web3, AI/ML, Blockchain, Python</div>
                     </CardContent>
                   </Card>
                 </div>
-
                 <div className="mt-12 text-center">
                   <DialogueBox
                     character="SYSTEM"
