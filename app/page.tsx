@@ -363,6 +363,73 @@ export default function GamePortfolio() {
   // Modern, small, pill-style nav button for mobile
   const modernNavButtonClass = "rounded-full bg-[#23232a] text-primary font-semibold px-4 py-2 shadow-sm border border-primary/20 hover:bg-primary hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/40 w-full text-base flex items-center justify-center gap-2";
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    // Clear error when user starts typing
+    setFormErrors(prev => ({
+      ...prev,
+      [name]: ''
+    }));
+  };
+
+  const validateForm = () => {
+    const errors = {
+      name: '',
+      email: '',
+      message: ''
+    }
+    let isValid = true
+
+    if (!formData.name.trim()) {
+      errors.name = 'Name is required'
+      isValid = false
+    }
+
+    if (!formData.email.trim()) {
+      errors.email = 'Email is required'
+      isValid = false
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = 'Invalid email format'
+      isValid = false
+    }
+
+    if (!formData.message.trim()) {
+      errors.message = 'Message is required'
+      isValid = false
+    }
+
+    setFormErrors(errors)
+    return isValid
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!validateForm()) {
+      return
+    }
+
+    setIsSubmitting(true)
+    setSubmitStatus('idle')
+
+    try {
+      // TODO: Replace with your actual form submission logic
+      // For now, we'll simulate a successful submission
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      setSubmitStatus('success')
+      setFormData({ name: '', email: '', message: '' })
+    } catch (error) {
+      setSubmitStatus('error')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   return (
     <div className="min-h-screen p-4 md:p-8">
       {/* Starry Background */}
@@ -976,86 +1043,107 @@ export default function GamePortfolio() {
 
             {/* CONTACT LEVEL */}
             {gameState === "contact" && (
-              <div className="container mx-auto px-4 py-12 max-w-3xl">
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl font-bold text-primary mb-4">MESSAGE_TERMINAL.SYS</h2>
+              <div className="container mx-auto px-4 py-6 sm:py-12 max-w-3xl">
+                <div className="text-center mb-6 sm:mb-12">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-primary mb-4">MESSAGE_TERMINAL.SYS</h2>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
                   {/* Contact Form Box */}
-                  <div className="card-game p-6 flex flex-col justify-between">
+                  <div className="card-game p-4 sm:p-6 flex flex-col justify-between">
                     <div>
-                      <div className="text-primary font-bold mb-2 text-lg">Contact Directly</div>
-                      <form
-                        onSubmit={(e) => {
-                          e.preventDefault();
-                          // TODO: Integrate with EmailJS or Formspree
-                          console.log('Form submitted:', formData);
-                          alert('Message sent! (Integrate with EmailJS or Formspree)');
-                          setFormData({ name: '', email: '', message: '' });
-                        }}
-                        className="space-y-4"
-                      >
-                        <Input
-                          type="text"
-                          name="name"
-                          value={formData.name}
-                          onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                          required
-                          placeholder="Your Name"
-                          className="w-full p-2 rounded bg-background border border-primary/30 focus:border-primary outline-none"
-                        />
-                        <Input
-                          type="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                          required
-                          placeholder="Your Email"
-                          className="w-full p-2 rounded bg-background border border-primary/30 focus:border-primary outline-none"
-                        />
-                        <Textarea
-                          name="message"
-                          value={formData.message}
-                          onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
-                          required
-                          placeholder="Type your message..."
-                          rows={4}
-                          className="w-full p-2 rounded bg-background border border-primary/30 focus:border-primary outline-none"
-                        />
+                      <div className="text-primary font-bold mb-2 text-base sm:text-lg">Contact Directly</div>
+                      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+                        <div>
+                          <Input
+                            type="text"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleInputChange}
+                            placeholder="Your Name"
+                            className={`w-full p-2 text-sm sm:text-base rounded bg-background border ${
+                              formErrors.name ? 'border-red-500' : 'border-primary/30'
+                            } focus:border-primary outline-none`}
+                          />
+                          {formErrors.name && (
+                            <p className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.name}</p>
+                          )}
+                        </div>
+                        
+                        <div>
+                          <Input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            placeholder="Your Email"
+                            className={`w-full p-2 text-sm sm:text-base rounded bg-background border ${
+                              formErrors.email ? 'border-red-500' : 'border-primary/30'
+                            } focus:border-primary outline-none`}
+                          />
+                          {formErrors.email && (
+                            <p className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.email}</p>
+                          )}
+                        </div>
+                        
+                        <div>
+                          <Textarea
+                            name="message"
+                            value={formData.message}
+                            onChange={handleInputChange}
+                            placeholder="Type your message..."
+                            rows={4}
+                            className={`w-full p-2 text-sm sm:text-base rounded bg-background border ${
+                              formErrors.message ? 'border-red-500' : 'border-primary/30'
+                            } focus:border-primary outline-none`}
+                          />
+                          {formErrors.message && (
+                            <p className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.message}</p>
+                          )}
+                        </div>
+
                         <button
                           type="submit"
-                          className="rpg-button bg-primary text-background hover:bg-primary/80 w-full mt-2"
+                          disabled={isSubmitting}
+                          className={`rpg-button bg-primary text-background hover:bg-primary/80 w-full mt-2 text-sm sm:text-base py-2 ${
+                            isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                          }`}
                         >
-                          Send Message
+                          {isSubmitting ? 'Sending...' : 'Send Message'}
                         </button>
+
+                        {submitStatus === 'success' && (
+                          <p className="text-green-500 text-xs sm:text-sm mt-2">Message sent successfully!</p>
+                        )}
+                        {submitStatus === 'error' && (
+                          <p className="text-red-500 text-xs sm:text-sm mt-2">Failed to send message. Please try again.</p>
+                        )}
                       </form>
                     </div>
                   </div>
 
-                  {/* Resume/CV Box */}
-                  <div className="card-game p-6 flex flex-col items-center justify-center">
-                    <div className="text-primary font-bold mb-2 text-lg">Resume / CV</div>
-                    <div className="text-muted-foreground mb-4 text-center">Download or view my latest resume/CV.</div>
-                    <a
-                      href="/assets/YOUR_RESUME.pdf"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="rpg-button bg-secondary text-primary hover:bg-secondary/80 w-full text-center"
-                      download
-                    >
-                      Download Resume
-                    </a>
-                  </div>
-                </div>
-
-                <div className="mt-12 text-center">
-                  <div className="card-game inline-block p-4 text-sm">
-                    <div className="text-primary mb-2">CONNECTION STATUS:</div>
-                    <div className="space-y-1 text-xs">
-                      <div className="text-primary">🟢 ONLINE</div>
-                      <div className="text-secondary">⚡ RESPONSE TIME: {"< 24H"}</div>
-                      <div className="text-accent">🎯 AVAILABILITY: OPEN TO QUESTS</div>
+                  {/* Contact Info Box */}
+                  <div className="card-game p-4 sm:p-6">
+                    <div className="text-primary font-bold mb-4 text-base sm:text-lg">Contact Information</div>
+                    <div className="space-y-3 sm:space-y-4">
+                      <div className="flex items-center gap-2">
+                        <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                        <a href="mailto:your.email@example.com" className="text-sm sm:text-base hover:text-primary transition-colors">
+                          your.email@example.com
+                        </a>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Github className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                        <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" className="text-sm sm:text-base hover:text-primary transition-colors">
+                          github.com/yourusername
+                        </a>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Linkedin className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                        <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener noreferrer" className="text-sm sm:text-base hover:text-primary transition-colors">
+                          linkedin.com/in/yourusername
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
