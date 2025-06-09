@@ -1213,7 +1213,12 @@ export default function GamePortfolio() {
                             rel="noopener noreferrer"
                             onClick={(e) => {
                               e.preventDefault();
-                              window.open("/Yuvrajsharma_Resume.pdf", "_blank");
+                              const link = document.createElement('a');
+                              link.href = "/Yuvrajsharma_Resume.pdf";
+                              link.download = "Yuvrajsharma_Resume.pdf";
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);
                             }}
                             className="flex items-center space-x-3 p-3 rounded-lg bg-background/50 hover:bg-background/80 transition-colors duration-200 cursor-pointer active:scale-95"
                           >
