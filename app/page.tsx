@@ -1207,28 +1207,12 @@ export default function GamePortfolio() {
                             <span className="text-gray-200">Email</span>
                           </a>
                           <a
-                            href="/Yuvrajsharma_Resume.pdf"
-                            download
+                            href="https://drive.google.com/file/d/1WttrG96hfK6iGvyAfoXs1iCtwB0Ee43S/view?usp=sharing"
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => {
                               e.preventDefault();
-                              fetch('/Yuvrajsharma_Resume.pdf')
-                                .then(response => response.blob())
-                                .then(blob => {
-                                  const url = window.URL.createObjectURL(blob);
-                                  const a = document.createElement('a');
-                                  a.href = url;
-                                  a.download = 'Yuvrajsharma_Resume.pdf';
-                                  document.body.appendChild(a);
-                                  a.click();
-                                  window.URL.revokeObjectURL(url);
-                                  document.body.removeChild(a);
-                                })
-                                .catch(error => {
-                                  console.error('Error downloading resume:', error);
-                                  window.open('/Yuvrajsharma_Resume.pdf', '_blank');
-                                });
+                              window.open("https://drive.google.com/file/d/1WttrG96hfK6iGvyAfoXs1iCtwB0Ee43S/view?usp=sharing", "_blank");
                             }}
                             className="flex items-center space-x-3 p-3 rounded-lg bg-background/50 hover:bg-background/80 transition-colors duration-200 cursor-pointer active:scale-95"
                           >
