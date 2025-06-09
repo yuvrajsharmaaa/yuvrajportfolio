@@ -17,8 +17,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <ClientLayout inter={inter.variable} cinzel={cinzel.variable}>
-      {children}
-    </ClientLayout>
+    <html lang="en">
+      <body>
+        <ClientLayout inter={inter.variable} cinzel={cinzel.variable}>
+          {children}
+        </ClientLayout>
+      </body>
+    </html>
   )
 }

@@ -6,6 +6,12 @@ import { Badge } from "@/components/ui/badge"
 import { Download, Mail, Github, Linkedin, Building, Code, Gamepad2, Terminal, Zap, Brain, Cpu, Sparkles } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { sendEmail } from './lib/email';
+import emailjs from '@emailjs/browser';
+import { createPortal } from 'react-dom'
+
+// Initialize EmailJS with the correct public key
+emailjs.init('5PmF525aKrV96l7Yk');
 
 // Game state management
 type GameState = "start" | "home" | "about" | "projects" | "blogs" | "contact"
@@ -207,6 +213,18 @@ export default function GamePortfolio() {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
+  // Handle body scroll lock when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.classList.add('no-scroll')
+    } else {
+      document.body.classList.remove('no-scroll')
+    }
+    return () => {
+      document.body.classList.remove('no-scroll')
+    }
+  }, [isMobileMenuOpen])
+
   const projects: Record<ProjectCategory, Project[]> = {
     architecture: [
       {
@@ -369,11 +387,6 @@ export default function GamePortfolio() {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
-    setFormErrors(prev => ({
-      ...prev,
-      [name]: ''
-    }));
   };
 
   const validateForm = () => {
@@ -417,456 +430,363 @@ export default function GamePortfolio() {
     setSubmitStatus('idle')
 
     try {
-      // TODO: Replace with your actual form submission logic
-      // For now, we'll simulate a successful submission
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const result = await sendEmail(formData);
       
-      setSubmitStatus('success')
-      setFormData({ name: '', email: '', message: '' })
+      if (result.success) {
+        setSubmitStatus('success')
+        setFormData({ name: '', email: '', message: '' })
+      } else {
+        const errorMessage = result.error?.message || 'Failed to send email'
+        console.error('Email sending failed:', errorMessage)
+        setSubmitStatus('error')
+      }
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred'
+      console.error('Error sending email:', errorMessage)
       setSubmitStatus('error')
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  return (
-    <div className="min-h-screen p-4 md:p-8">
-      {/* Starry Background */}
-      <div className="stars">
-        <div className="shooting-star"></div>
-        <div className="shooting-star"></div>
-        <div className="shooting-star"></div>
-        <div className="shooting-star"></div>
-        <div className="shooting-star"></div>
-      </div>
+  // Mobile menu portal
+  const MobileMenu = () => {
+    if (!isMobileMenuOpen) return null
 
-      {/* Tooltips */}
-      <div className="fixed top-4 right-4 game-tooltip">
-        Level: {String(gameState).toUpperCase()}
-      </div>
-
-      {/* Add scanlines effect */}
-      <div className="scanlines" />
-      
-      {/* START SCREEN */}
-      {gameState === "start" && (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center max-w-2xl w-full mx-auto p-4 sm:p-8 flex flex-col items-center justify-center">
-            <div className="mb-8 w-full">
-              <div className="text-primary text-6xl mb-4 text-glow">◤◢◤◢◤◢◤◢◤◢</div>
-              <h1 className="text-4xl md:text-6xl font-bold mb-4 text-primary text-glow backdrop-blur-sm">YUVRAJ.EXE</h1>
-              <div className="text-xl text-secondary mb-2 text-glow">XR & GAME DEVELOPER</div>
-              <div className="text-sm text-muted-foreground mb-8">ARCHITECTURE-XR-GAMEDEV-WEB3</div>
-            </div>
-            <div className="space-y-4 w-full flex flex-col items-center">
-              <GameButton
-                onClick={() => setGameState("home")}
-                variant="primary"
-                keyHint="ENTER"
-                className="text-xl px-8 py-4 hover-lift w-full max-w-xs"
-              >
-                ▶ START GAME
-              </GameButton>
-            </div>
+    return createPortal(
+      <div 
+        className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md"
+        onClick={() => setIsMobileMenuOpen(false)}
+      >
+        <div 
+          className="relative w-full max-h-[80vh] flex flex-col items-center justify-center gap-4"
+          onClick={e => e.stopPropagation()}
+        >
+          <button 
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="absolute top-4 right-4 text-primary hover:text-primary/80 transition-colors p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50 bg-[#23232a] shadow"
+            aria-label="Close navigation menu"
+          >
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+          <div className="flex flex-col items-center gap-4">
+            <button 
+              onClick={() => { setGameState('home'); setIsMobileMenuOpen(false); }} 
+              className={`${modernNavButtonClass} text-lg py-2 px-6`}
+            >
+              Home
+            </button>
+            <button 
+              onClick={() => { setGameState('about'); setIsMobileMenuOpen(false); }} 
+              className={`${modernNavButtonClass} text-lg py-2 px-6`}
+            >
+              About
+            </button>
+            <button 
+              onClick={() => { setGameState('projects'); setIsMobileMenuOpen(false); }} 
+              className={`${modernNavButtonClass} text-lg py-2 px-6`}
+            >
+              Projects
+            </button>
+            <button 
+              onClick={() => { setGameState('blogs'); setIsMobileMenuOpen(false); }} 
+              className={`${modernNavButtonClass} text-lg py-2 px-6`}
+            >
+              Blogs
+            </button>
+            <button 
+              onClick={() => { setGameState('contact'); setIsMobileMenuOpen(false); }} 
+              className={`${modernNavButtonClass} text-lg py-2 px-6`}
+            >
+              Contact
+            </button>
           </div>
         </div>
-      )}
+      </div>,
+      document.body
+    )
+  }
 
-      {/* MAIN GAME INTERFACE */}
-      {gameState !== "start" && (
-        <div className="min-h-screen">
-          {/* Game HUD */}
-          <nav className="z-50 fixed top-0 left-0 w-full bg-background/90 shadow-md backdrop-blur-md">
-            <div className="flex items-center justify-between max-w-5xl mx-auto py-3 px-4 md:px-0">
-              <div className="text-primary font-extrabold text-2xl tracking-tight select-none">PORTFOLIO.GAME</div>
-              {/* Desktop Navigation */}
-              <div className="hidden md:flex gap-3 items-center">
-                <button onClick={() => setGameState('home')} className={modernNavButtonClass}>Home</button>
-                <button onClick={() => setGameState('about')} className={modernNavButtonClass}>About</button>
-                <button onClick={() => setGameState('projects')} className={modernNavButtonClass}>Projects</button>
-                <button onClick={() => setGameState('blogs')} className={modernNavButtonClass}>Blogs</button>
-                <button onClick={() => setGameState('contact')} className={modernNavButtonClass}>Contact</button>
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <div className="min-h-screen p-4 md:p-8">
+        {/* Starry Background */}
+        <div className="stars">
+          <div className="shooting-star"></div>
+          <div className="shooting-star"></div>
+          <div className="shooting-star"></div>
+          <div className="shooting-star"></div>
+          <div className="shooting-star"></div>
+        </div>
+
+        {/* Tooltips */}
+        <div className="fixed top-4 right-4 game-tooltip">
+          Level: {String(gameState).toUpperCase()}
+        </div>
+
+        {/* Add scanlines effect */}
+        <div className="scanlines" />
+        
+        {/* START SCREEN */}
+        {gameState === "start" && (
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="text-center max-w-2xl w-full mx-auto p-4 sm:p-8 flex flex-col items-center justify-center">
+              <div className="mb-8 w-full">
+                <div className="text-primary text-6xl mb-4 text-glow">◤◢◤◢◤◢◤◢◤◢</div>
+                <h1 className="text-4xl md:text-6xl font-bold mb-4 text-primary text-glow backdrop-blur-sm">YUVRAJ.EXE</h1>
+                <div className="text-xl text-secondary mb-2 text-glow">XR & GAME DEVELOPER</div>
+                <div className="text-sm text-muted-foreground mb-8">ARCHITECTURE-XR-GAMEDEV-WEB3</div>
               </div>
-              {/* Mobile Hamburger */}
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden flex items-center justify-center w-11 h-11 rounded-full bg-[#23232a] shadow focus:outline-none focus:ring-2 focus:ring-primary/50"
-                aria-label="Open navigation menu"
-              >
-                <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                  <line x1="3" y1="12" x2="21" y2="12" />
-                  <line x1="3" y1="6" x2="21" y2="6" />
-                  <line x1="3" y1="18" x2="21" y2="18" />
-                </svg>
-              </button>
-            </div>
-            {/* Mobile Drawer */}
-            <div 
-              className={`fixed inset-0 z-50 bg-black/90 backdrop-blur-sm transition-all duration-300 ease-in-out ${
-                isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-              } flex items-center justify-center`}
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <div 
-                className={`relative w-11/12 max-w-xs mx-auto bg-[#18181b] rounded-2xl shadow-2xl flex flex-col items-center justify-center gap-2 pt-8 pb-6 px-4 transition-transform duration-300 ease-in-out ${
-                  isMobileMenuOpen ? 'translate-y-0' : '-translate-y-10'
-                }`}
-                onClick={e => e.stopPropagation()}
-              >
-                <button 
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="absolute top-3 right-3 text-primary hover:text-primary/80 transition-colors p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50 bg-[#23232a] shadow"
-                  aria-label="Close navigation menu"
+              <div className="space-y-4 w-full flex flex-col items-center">
+                <GameButton
+                  onClick={() => setGameState("home")}
+                  variant="primary"
+                  keyHint="ENTER"
+                  className="text-xl px-8 py-4 hover-lift w-full max-w-xs"
                 >
-                  <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
+                  ▶ START GAME
+                </GameButton>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MAIN GAME INTERFACE */}
+        {gameState !== "start" && (
+          <div className="min-h-screen">
+            {/* Game HUD */}
+            <nav className="z-50 fixed top-0 left-0 w-full bg-background/90 shadow-md backdrop-blur-md">
+              <div className="flex items-center justify-between max-w-5xl mx-auto py-3 px-4 md:px-0">
+                <div className="text-primary font-extrabold text-2xl tracking-tight select-none">PORTFOLIO.GAME</div>
+                {/* Desktop Navigation */}
+                <div className="hidden md:flex gap-3 items-center">
+                  <button onClick={() => setGameState('home')} className={modernNavButtonClass}>Home</button>
+                  <button onClick={() => setGameState('about')} className={modernNavButtonClass}>About</button>
+                  <button onClick={() => setGameState('projects')} className={modernNavButtonClass}>Projects</button>
+                  <button onClick={() => setGameState('blogs')} className={modernNavButtonClass}>Blogs</button>
+                  <button onClick={() => setGameState('contact')} className={modernNavButtonClass}>Contact</button>
+                </div>
+                {/* Mobile Hamburger */}
+                <button
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="md:hidden flex items-center justify-center w-11 h-11 rounded-full bg-[#23232a] shadow focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  aria-label="Open navigation menu"
+                >
+                  <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
                   </svg>
                 </button>
-                <div className="w-full flex flex-col gap-2 mt-2">
-                  <button 
-                    onClick={() => { setGameState('home'); setIsMobileMenuOpen(false); }} 
-                    className={`${modernNavButtonClass} text-base py-2`}
-                  >
-                    Home
-                  </button>
-                  <button 
-                    onClick={() => { setGameState('about'); setIsMobileMenuOpen(false); }} 
-                    className={`${modernNavButtonClass} text-base py-2`}
-                  >
-                    About
-                  </button>
-                  <button 
-                    onClick={() => { setGameState('projects'); setIsMobileMenuOpen(false); }} 
-                    className={`${modernNavButtonClass} text-base py-2`}
-                  >
-                    Projects
-                  </button>
-                  <button 
-                    onClick={() => { setGameState('blogs'); setIsMobileMenuOpen(false); }} 
-                    className={`${modernNavButtonClass} text-base py-2`}
-                  >
-                    Blogs
-                  </button>
-                  <button 
-                    onClick={() => { setGameState('contact'); setIsMobileMenuOpen(false); }} 
-                    className={`${modernNavButtonClass} text-base py-2`}
-                  >
-                    Contact
-                  </button>
-                </div>
               </div>
-            </div>
-          </nav>
+            </nav>
 
-          {/* GAME CONTENT */}
-          <div className="pt-24">
-            {/* HOME LEVEL */}
-            {gameState === "home" && (
-              <div className="container mx-auto px-4 py-12 max-w-6xl">
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
-                  {/* Left Column - Main Content */}
-                  <div className="space-y-8">
-                    <div className="space-y-4">
-                      <h1 className="text-4xl md:text-5xl font-bold text-primary mb-4 text-glow">
-                        <span className="text-secondary">[</span>YUVRAJ SHARMA<span className="text-secondary">]</span>
-                      </h1>
-                      <div className="text-xl text-secondary mb-2">XR & GAME DEVELOPER</div>
-                      <div className="text-sm text-muted-foreground leading-relaxed">
-                        Crafting immersive experiences at the intersection of technology and creativity.
-                        Specializing in AR/VR development, game design, and interactive digital solutions.
+            {/* Mobile Menu Portal */}
+            <MobileMenu />
+
+            {/* GAME CONTENT */}
+            <div className="pt-24">
+              {/* HOME LEVEL */}
+              {gameState === "home" && (
+                <div className="container mx-auto px-4 py-12 max-w-6xl">
+                  <div className="grid lg:grid-cols-2 gap-12 items-center">
+                    {/* Left Column - Main Content */}
+                    <div className="space-y-8">
+                      <div className="space-y-4">
+                        <h1 className="text-4xl md:text-5xl font-bold text-primary mb-4 text-glow">
+                          <span className="text-secondary">[</span>YUVRAJ SHARMA<span className="text-secondary">]</span>
+                        </h1>
+                        <div className="text-xl text-secondary mb-2">XR & GAME DEVELOPER</div>
+                        <div className="text-sm text-muted-foreground leading-relaxed">
+                          Crafting immersive experiences at the intersection of technology and creativity.
+                          Specializing in AR/VR development, game design, and interactive digital solutions.
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-4">
+                        <GameButton 
+                          onClick={() => window.open("https://github.com/yuvrajsharmaaa")}
+                          variant="primary"
+                          className="hover-lift"
+                        >
+                          <Github className="w-4 h-4 mr-2" />
+                          GITHUB
+                        </GameButton>
+                        <GameButton 
+                          onClick={() => window.open("https://linkedin.com/in/yuvrajsharma03")}
+                          variant="secondary"
+                          className="hover-lift"
+                        >
+                          <Linkedin className="w-4 h-4 mr-2" />
+                          LINKEDIN
+                        </GameButton>
+                        <GameButton 
+                          onClick={() => setGameState("contact")}
+                          variant="secondary"
+                          className="hover-lift"
+                        >
+                          <Mail className="w-4 h-4 mr-2" />
+                          CONTACT
+                        </GameButton>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-4">
-                      <GameButton 
-                        onClick={() => window.open("https://github.com/yuvrajsharmaaa")}
-                        variant="primary"
-                        className="hover-lift"
-                      >
-                        <Github className="w-4 h-4 mr-2" />
-                        GITHUB
-                      </GameButton>
-                      <GameButton 
-                        onClick={() => window.open("https://linkedin.com/in/yuvrajsharma03")}
-                        variant="secondary"
-                        className="hover-lift"
-                      >
-                        <Linkedin className="w-4 h-4 mr-2" />
-                        LINKEDIN
-                      </GameButton>
-                      <GameButton 
-                        onClick={() => setGameState("contact")}
-                        variant="secondary"
-                        className="hover-lift"
-                      >
-                        <Mail className="w-4 h-4 mr-2" />
-                        CONTACT
-                      </GameButton>
-                    </div>
-                  </div>
-
-                  {/* Right Column - Stats Card */}
-                  <div className="card-game p-6 backdrop-blur-md">
-                    <div className="text-primary font-bold mb-6 text-center text-xl">EXPERTISE</div>
-                    <div className="grid grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <div className="text-secondary text-sm">AR/VR DEVELOPMENT</div>
-                        <div className="text-xs text-muted-foreground">
-                          • Unity & Unreal Engine
-                          <br />• ARKit & ARCore
-                          <br />• 3D Modeling
-                          <br />• Spatial Computing
+                    {/* Right Column - Stats Card */}
+                    <div className="card-game p-6 backdrop-blur-md">
+                      <div className="text-primary font-bold mb-6 text-center text-xl">EXPERTISE</div>
+                      <div className="grid grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <div className="text-secondary text-sm">AR/VR DEVELOPMENT</div>
+                          <div className="text-xs text-muted-foreground">
+                            • Unity & Unreal Engine
+                            <br />• ARKit & ARCore
+                            <br />• 3D Modeling
+                            <br />• Spatial Computing
+                          </div>
                         </div>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="text-secondary text-sm">GAME DEVELOPMENT</div>
-                        <div className="text-xs text-muted-foreground">
-                          • Game Design
-                          <br />• C# & C++
-                          <br />• Godot Engine
-                          <br />• Game Mechanics
+                        <div className="space-y-2">
+                          <div className="text-secondary text-sm">GAME DEVELOPMENT</div>
+                          <div className="text-xs text-muted-foreground">
+                            • Game Design
+                            <br />• C# & C++
+                            <br />• Godot Engine
+                            <br />• Game Mechanics
+                          </div>
                         </div>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="text-secondary text-sm">WEB3 & BLOCKCHAIN</div>
-                        <div className="text-xs text-muted-foreground">
-                          • Smart Contracts
-                          <br />• DApp Development
-                          <br />• NFT Integration
-                          <br />• Web3 Architecture
+                        <div className="space-y-2">
+                          <div className="text-secondary text-sm">WEB3 & BLOCKCHAIN</div>
+                          <div className="text-xs text-muted-foreground">
+                            • Smart Contracts
+                            <br />• DApp Development
+                            <br />• NFT Integration
+                            <br />• Web3 Architecture
+                          </div>
                         </div>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="text-secondary text-sm">SOFTWARE ENGINEERING</div>
-                        <div className="text-xs text-muted-foreground">
-                          • Full-Stack Development
-                          <br />• Python & JavaScript
-                          <br />• System Architecture
-                          <br />• API Design
+                        <div className="space-y-2">
+                          <div className="text-secondary text-sm">SOFTWARE ENGINEERING</div>
+                          <div className="text-xs text-muted-foreground">
+                            • Full-Stack Development
+                            <br />• Python & JavaScript
+                            <br />• System Architecture
+                            <br />• API Design
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* ABOUT LEVEL */}
-            {gameState === "about" && (
-              <div className="container mx-auto px-4 py-12 max-w-5xl">
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl font-bold text-primary mb-4">CHARACTER_PROFILE.DAT</h2>
-                </div>
-                <div className="grid lg:grid-cols-3 gap-8">
-                  {/* XR Developer Class */}
-                  <Card className="card-game">
-                    <CardHeader>
-                      <CardTitle className="text-primary font-mono flex items-center">
-                        <Sparkles className="mr-2" />
-                        XR_DEVELOPER
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="text-sm space-y-3">
-                      <div className="text-foreground">
-                        Specialized in creating immersive AR/VR experiences that bridge the gap between physical and digital worlds.
-                      </div>
-                      <div className="text-xs text-muted-foreground">TOOLS: Unity, Unreal Engine, ARKit, ARCore</div>
-                    </CardContent>
-                  </Card>
-                  {/* Game Developer Class */}
-                  <Card className="card-game">
-                    <CardHeader>
-                      <CardTitle className="text-secondary font-mono flex items-center">
-                        <Gamepad2 className="mr-2" />
-                        GAME_DEVELOPER
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="text-sm space-y-3">
-                      <div className="text-foreground">
-                        Creating engaging game experiences that combine storytelling with technical innovation.
-                      </div>
-                      <div className="text-xs text-muted-foreground">ENGINES: Unity, Godot, Custom Engines</div>
-                    </CardContent>
-                  </Card>
-                  {/* Tech Explorer Class */}
-                  <Card className="card-game">
-                    <CardHeader>
-                      <CardTitle className="text-accent font-mono flex items-center">
-                        <Brain className="mr-2" />
-                        TECH_EXPLORER
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="text-sm space-y-3">
-                      <div className="text-foreground">
-                        Exploring the intersection of emerging technologies and creative expression.
-                      </div>
-                      <div className="text-xs text-muted-foreground">TECH: Web3, AI/ML, Blockchain, Python</div>
-                    </CardContent>
-                  </Card>
-                </div>
-                <div className="mt-12 text-center">
-                  <DialogueBox
-                    character="SYSTEM"
-                    message={`PLAYER PROFILE:\nClass: Hybrid Explorer\nTraits: Curious, Builder, Dreamer\n---\n"Euphoria isn't a big revelation. It's the quiet joy of building, learning, and imagining new worlds.\nDrawn to XR, games, and tech by curiosity and hands-on play.\nOffline: VR diving, hackathons, lifting, or binge-watching building breakdowns.\nBelieves in: Collaborate, create, leave a mark.\nIf our quests align, let's team up and make something legendary."`}
-                    showNext={false}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* PROJECTS LEVEL */}
-            {gameState === "projects" && (
-              <div className="container mx-auto px-4 py-12 max-w-6xl">
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl font-bold text-primary mb-4">QUEST_LOG.DB</h2>
-                  <div className="text-muted-foreground">Choose your adventure path:</div>
-                </div>
-
-                {/* Project Category Selector */}
-                <div className="flex justify-center mb-8 space-x-4">
-                  <GameButton
-                    onClick={() => setSelectedProject("architecture")}
-                    variant={selectedProject === "architecture" ? "primary" : "secondary"}
-                  >
-                    <Building className="w-4 h-4" />
-                    ARCHITECTURE
-                  </GameButton>
-                  <GameButton
-                    onClick={() => setSelectedProject("software")}
-                    variant={selectedProject === "software" ? "primary" : "secondary"}
-                  >
-                    <Code className="w-4 h-4" />
-                    SOFTWARE
-                  </GameButton>
-                  <GameButton
-                    onClick={() => setSelectedProject("games")}
-                    variant={selectedProject === "games" ? "primary" : "secondary"}
-                  >
-                    <Gamepad2 className="w-4 h-4" />
-                    GAMES
-                  </GameButton>
-                  <GameButton
-                    onClick={() => setSelectedProject("more")}
-                    variant={selectedProject === "more" ? "primary" : "secondary"}
-                  >
-                    <Zap className="w-4 h-4" />
-                    MORE
-                  </GameButton>
-                </div>
-
-                {/* Project Grid */}
-                {selectedProject !== "more" ? (
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {projects[selectedProject].map((project, index) => (
-                      <Card
-                        key={index}
-                        className="card-game hover:border-primary transition-colors"
-                      >
-                        <CardHeader>
-                          <div className="relative w-full h-48 bg-secondary/20 rounded mb-4 overflow-hidden">
-                            <img
-                              src={project.image || "/placeholder.svg"}
-                              alt={project.title}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = "/placeholder.svg";
-                                target.onerror = null;
-                              }}
-                            />
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <CardTitle className="text-primary text-lg">{project.title}</CardTitle>
-                            <Badge
-                              variant="outline"
-                              className={`
-                                ${
-                                  project.status === "COMPLETED" ||
-                                  project.status === "DEPLOYED" ||
-                                  project.status === "RELEASED" ||
-                                  project.status === "LIVE DEMO"
-                                    ? "text-primary border-primary"
-                                    : project.status === "IN DEVELOPMENT" || project.status === "ONGOING"
-                                      ? "text-secondary border-secondary"
-                                      : "text-accent border-accent"
-                                }
-                              `}
-                            >
-                              {project.status}
-                            </Badge>
-                          </div>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-foreground text-sm mb-4">{project.description}</p>
-                          <div className="space-y-2">
-                            <div className="text-xs text-muted-foreground">TECH STACK:</div>
-                            <div className="flex flex-wrap gap-1">
-                              {project.tech.map((tech, techIndex) => (
-                                <Badge
-                                  key={techIndex}
-                                  variant="outline"
-                                  className="text-xs text-accent border-accent"
-                                >
-                                  {tech}
-                                </Badge>
-                              ))}
-                            </div>
-                            {project.demoUrl && (
-                              <div className="mt-4">
-                                <GameButton
-                                  onClick={() => window.open(project.demoUrl, '_blank')}
-                                  variant="primary"
-                                  className="w-full"
-                                >
-                                  <Gamepad2 className="w-4 h-4 mr-2" />
-                                  PLAY NOW
-                                </GameButton>
-                              </div>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+              {/* ABOUT LEVEL */}
+              {gameState === "about" && (
+                <div className="container mx-auto px-4 py-12 max-w-5xl">
+                  <div className="text-center mb-12">
+                    <h2 className="text-3xl font-bold text-primary mb-4">CHARACTER_PROFILE.DAT</h2>
                   </div>
-                ) : (
-                  <div>
-                    {/* More Projects Language Selector */}
-                    <div className="flex justify-center mb-8 space-x-4">
-                      <GameButton
-                        onClick={() => setSelectedMoreProject("c")}
-                        variant={selectedMoreProject === "c" ? "primary" : "secondary"}
-                      >
-                        <Terminal className="w-4 h-4" />
-                        C
-                      </GameButton>
-                      <GameButton
-                        onClick={() => setSelectedMoreProject("cpp")}
-                        variant={selectedMoreProject === "cpp" ? "primary" : "secondary"}
-                      >
-                        <Cpu className="w-4 h-4" />
-                        C++
-                      </GameButton>
-                      <GameButton
-                        onClick={() => setSelectedMoreProject("python")}
-                        variant={selectedMoreProject === "python" ? "primary" : "secondary"}
-                      >
-                        <Brain className="w-4 h-4" />
-                        PYTHON
-                      </GameButton>
-                      <GameButton
-                        onClick={() => setSelectedMoreProject("fullstack")}
-                        variant={selectedMoreProject === "fullstack" ? "primary" : "secondary"}
-                      >
-                        <Code className="w-4 h-4" />
-                        FULLSTACK
-                      </GameButton>
-                    </div>
+                  <div className="grid lg:grid-cols-3 gap-8">
+                    {/* XR Developer Class */}
+                    <Card className="card-game">
+                      <CardHeader>
+                        <CardTitle className="text-primary font-mono flex items-center">
+                          <Sparkles className="mr-2" />
+                          XR_DEVELOPER
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="text-sm space-y-3">
+                        <div className="text-foreground">
+                          Specialized in creating immersive AR/VR experiences that bridge the gap between physical and digital worlds.
+                        </div>
+                        <div className="text-xs text-muted-foreground">TOOLS: Unity, Unreal Engine, ARKit, ARCore</div>
+                      </CardContent>
+                    </Card>
+                    {/* Game Developer Class */}
+                    <Card className="card-game">
+                      <CardHeader>
+                        <CardTitle className="text-secondary font-mono flex items-center">
+                          <Gamepad2 className="mr-2" />
+                          GAME_DEVELOPER
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="text-sm space-y-3">
+                        <div className="text-foreground">
+                          Creating engaging game experiences that combine storytelling with technical innovation.
+                        </div>
+                        <div className="text-xs text-muted-foreground">ENGINES: Unity, Godot, Custom Engines</div>
+                      </CardContent>
+                    </Card>
+                    {/* Tech Explorer Class */}
+                    <Card className="card-game">
+                      <CardHeader>
+                        <CardTitle className="text-accent font-mono flex items-center">
+                          <Brain className="mr-2" />
+                          TECH_EXPLORER
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="text-sm space-y-3">
+                        <div className="text-foreground">
+                          Exploring the intersection of emerging technologies and creative expression.
+                        </div>
+                        <div className="text-xs text-muted-foreground">TECH: Web3, AI/ML, Blockchain, Python</div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                  <div className="mt-12 text-center">
+                    <DialogueBox
+                      character="SYSTEM"
+                      message={`PLAYER PROFILE:\nClass: Hybrid Explorer\nTraits: Curious, Builder, Dreamer\n---\n"Euphoria isn't a big revelation. It's the quiet joy of building, learning, and imagining new worlds.\nDrawn to XR, games, and tech by curiosity and hands-on play.\nOffline: VR diving, hackathons, lifting, or binge-watching building breakdowns.\nBelieves in: Collaborate, create, leave a mark.\nIf our quests align, let's team up and make something legendary."`}
+                      showNext={false}
+                    />
+                  </div>
+                </div>
+              )}
 
-                    {/* More Projects Grid */}
+              {/* PROJECTS LEVEL */}
+              {gameState === "projects" && (
+                <div className="container mx-auto px-4 py-12 max-w-6xl">
+                  <div className="text-center mb-12">
+                    <h2 className="text-3xl font-bold text-primary mb-4">QUEST_LOG.DB</h2>
+                    <div className="text-muted-foreground">Choose your adventure path:</div>
+                  </div>
+
+                  {/* Project Category Selector */}
+                  <div className="flex justify-center mb-8 space-x-4">
+                    <GameButton
+                      onClick={() => setSelectedProject("architecture")}
+                      variant={selectedProject === "architecture" ? "primary" : "secondary"}
+                    >
+                      <Building className="w-4 h-4" />
+                      ARCHITECTURE
+                    </GameButton>
+                    <GameButton
+                      onClick={() => setSelectedProject("software")}
+                      variant={selectedProject === "software" ? "primary" : "secondary"}
+                    >
+                      <Code className="w-4 h-4" />
+                      SOFTWARE
+                    </GameButton>
+                    <GameButton
+                      onClick={() => setSelectedProject("games")}
+                      variant={selectedProject === "games" ? "primary" : "secondary"}
+                    >
+                      <Gamepad2 className="w-4 h-4" />
+                      GAMES
+                    </GameButton>
+                    <GameButton
+                      onClick={() => setSelectedProject("more")}
+                      variant={selectedProject === "more" ? "primary" : "secondary"}
+                    >
+                      <Zap className="w-4 h-4" />
+                      MORE
+                    </GameButton>
+                  </div>
+
+                  {/* Project Grid */}
+                  {selectedProject !== "more" ? (
                     <div className="grid md:grid-cols-2 gap-6">
-                      {moreProjects[selectedMoreProject].map((project, index) => (
+                      {projects[selectedProject].map((project, index) => (
                         <Card
                           key={index}
                           className="card-game hover:border-primary transition-colors"
@@ -892,7 +812,8 @@ export default function GamePortfolio() {
                                   ${
                                     project.status === "COMPLETED" ||
                                     project.status === "DEPLOYED" ||
-                                    project.status === "RELEASED"
+                                    project.status === "RELEASED" ||
+                                    project.status === "LIVE DEMO"
                                       ? "text-primary border-primary"
                                       : project.status === "IN DEVELOPMENT" || project.status === "ONGOING"
                                         ? "text-secondary border-secondary"
@@ -919,239 +840,395 @@ export default function GamePortfolio() {
                                   </Badge>
                                 ))}
                               </div>
+                              {project.demoUrl && (
+                                <div className="mt-4">
+                                  <GameButton
+                                    onClick={() => window.open(project.demoUrl, '_blank')}
+                                    variant="primary"
+                                    className="w-full"
+                                  >
+                                    <Gamepad2 className="w-4 h-4 mr-2" />
+                                    PLAY NOW
+                                  </GameButton>
+                                </div>
+                              )}
                             </div>
                           </CardContent>
                         </Card>
                       ))}
                     </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* BLOGS LEVEL */}
-            {gameState === "blogs" && (
-              <div className="container mx-auto px-4 py-12 max-w-6xl">
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl font-bold text-primary mb-4">BLOG_ARCHIVE.SYS</h2>
-                  <div className="text-muted-foreground">Latest thoughts and insights on tech and development</div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  {/* Blog Post 1 */}
-                  <Card className="card-game hover:border-primary transition-colors">
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-primary text-lg">The Future of AR in Architecture</CardTitle>
-                        <Badge variant="outline" className="text-secondary border-secondary">
-                          AR/VR
-                        </Badge>
-                      </div>
-                      <div className="text-xs text-muted-foreground mt-2">Published: March 15, 2024</div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-foreground text-sm mb-4">
-                        Exploring how augmented reality is revolutionizing architectural visualization and client presentations...
-                      </p>
-                      <GameButton
-                        onClick={() => window.open("/blog/ar-architecture")}
-                        variant="secondary"
-                        className="w-full"
-                      >
-                        READ MORE
-                      </GameButton>
-                    </CardContent>
-                  </Card>
-
-                  {/* Blog Post 2 */}
-                  <Card className="card-game hover:border-primary transition-colors">
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-primary text-lg">Game Development with Godot</CardTitle>
-                        <Badge variant="outline" className="text-secondary border-secondary">
-                          GAME DEV
-                        </Badge>
-                      </div>
-                      <div className="text-xs text-muted-foreground mt-2">Published: March 10, 2024</div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-foreground text-sm mb-4">
-                        A deep dive into why Godot is becoming a popular choice for indie game developers...
-                      </p>
-                      <GameButton
-                        onClick={() => window.open("/blog/godot-game-dev")}
-                        variant="secondary"
-                        className="w-full"
-                      >
-                        READ MORE
-                      </GameButton>
-                    </CardContent>
-                  </Card>
-
-                  {/* Blog Post 3 */}
-                  <Card className="card-game hover:border-primary transition-colors">
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-primary text-lg">Web3 in Gaming: The Next Frontier</CardTitle>
-                        <Badge variant="outline" className="text-secondary border-secondary">
-                          WEB3
-                        </Badge>
-                      </div>
-                      <div className="text-xs text-muted-foreground mt-2">Published: March 5, 2024</div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-foreground text-sm mb-4">
-                        How blockchain technology is transforming the gaming industry and player ownership...
-                      </p>
-                      <GameButton
-                        onClick={() => window.open("/blog/web3-gaming")}
-                        variant="secondary"
-                        className="w-full"
-                      >
-                        READ MORE
-                      </GameButton>
-                    </CardContent>
-                  </Card>
-
-                  {/* Blog Post 4 */}
-                  <Card className="card-game hover:border-primary transition-colors">
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-primary text-lg">Building XR Experiences with Unity</CardTitle>
-                        <Badge variant="outline" className="text-secondary border-secondary">
-                          XR DEV
-                        </Badge>
-                      </div>
-                      <div className="text-xs text-muted-foreground mt-2">Published: February 28, 2024</div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-foreground text-sm mb-4">
-                        Best practices and tips for creating immersive XR experiences using Unity...
-                      </p>
-                      <GameButton
-                        onClick={() => window.open("/blog/unity-xr")}
-                        variant="secondary"
-                        className="w-full"
-                      >
-                        READ MORE
-                      </GameButton>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-            )}
-
-            {/* CONTACT LEVEL */}
-            {gameState === "contact" && (
-              <div className="container mx-auto px-4 py-6 sm:py-12 max-w-3xl">
-                <div className="text-center mb-6 sm:mb-12">
-                  <h2 className="text-2xl sm:text-3xl font-bold text-primary mb-4">MESSAGE_TERMINAL.SYS</h2>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
-                  {/* Contact Form Box */}
-                  <div className="card-game p-4 sm:p-6 flex flex-col justify-between">
+                  ) : (
                     <div>
-                      <div className="text-primary font-bold mb-2 text-base sm:text-lg">Contact Directly</div>
-                      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-                        <div>
-                          <Input
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            placeholder="Your Name"
-                            className={`w-full p-2 text-sm sm:text-base rounded bg-background border ${
-                              formErrors.name ? 'border-red-500' : 'border-primary/30'
-                            } focus:border-primary outline-none`}
-                          />
-                          {formErrors.name && (
-                            <p className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.name}</p>
-                          )}
-                        </div>
-                        
-                        <div>
-                          <Input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            placeholder="Your Email"
-                            className={`w-full p-2 text-sm sm:text-base rounded bg-background border ${
-                              formErrors.email ? 'border-red-500' : 'border-primary/30'
-                            } focus:border-primary outline-none`}
-                          />
-                          {formErrors.email && (
-                            <p className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.email}</p>
-                          )}
-                        </div>
-                        
-                        <div>
-                          <Textarea
-                            name="message"
-                            value={formData.message}
-                            onChange={handleInputChange}
-                            placeholder="Type your message..."
-                            rows={4}
-                            className={`w-full p-2 text-sm sm:text-base rounded bg-background border ${
-                              formErrors.message ? 'border-red-500' : 'border-primary/30'
-                            } focus:border-primary outline-none`}
-                          />
-                          {formErrors.message && (
-                            <p className="text-red-500 text-xs sm:text-sm mt-1">{formErrors.message}</p>
-                          )}
-                        </div>
-
-                        <button
-                          type="submit"
-                          disabled={isSubmitting}
-                          className={`rpg-button bg-primary text-background hover:bg-primary/80 w-full mt-2 text-sm sm:text-base py-2 ${
-                            isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-                          }`}
+                      {/* More Projects Language Selector */}
+                      <div className="flex justify-center mb-8 space-x-4">
+                        <GameButton
+                          onClick={() => setSelectedMoreProject("c")}
+                          variant={selectedMoreProject === "c" ? "primary" : "secondary"}
                         >
-                          {isSubmitting ? 'Sending...' : 'Send Message'}
-                        </button>
+                          <Terminal className="w-4 h-4" />
+                          C
+                        </GameButton>
+                        <GameButton
+                          onClick={() => setSelectedMoreProject("cpp")}
+                          variant={selectedMoreProject === "cpp" ? "primary" : "secondary"}
+                        >
+                          <Cpu className="w-4 h-4" />
+                          C++
+                        </GameButton>
+                        <GameButton
+                          onClick={() => setSelectedMoreProject("python")}
+                          variant={selectedMoreProject === "python" ? "primary" : "secondary"}
+                        >
+                          <Brain className="w-4 h-4" />
+                          PYTHON
+                        </GameButton>
+                        <GameButton
+                          onClick={() => setSelectedMoreProject("fullstack")}
+                          variant={selectedMoreProject === "fullstack" ? "primary" : "secondary"}
+                        >
+                          <Code className="w-4 h-4" />
+                          FULLSTACK
+                        </GameButton>
+                      </div>
 
-                        {submitStatus === 'success' && (
-                          <p className="text-green-500 text-xs sm:text-sm mt-2">Message sent successfully!</p>
-                        )}
-                        {submitStatus === 'error' && (
-                          <p className="text-red-500 text-xs sm:text-sm mt-2">Failed to send message. Please try again.</p>
-                        )}
-                      </form>
+                      {/* More Projects Grid */}
+                      <div className="grid md:grid-cols-2 gap-6">
+                        {moreProjects[selectedMoreProject].map((project, index) => (
+                          <Card
+                            key={index}
+                            className="card-game hover:border-primary transition-colors"
+                          >
+                            <CardHeader>
+                              <div className="relative w-full h-48 bg-secondary/20 rounded mb-4 overflow-hidden">
+                                <img
+                                  src={project.image || "/placeholder.svg"}
+                                  alt={project.title}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.src = "/placeholder.svg";
+                                    target.onerror = null;
+                                  }}
+                                />
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <CardTitle className="text-primary text-lg">{project.title}</CardTitle>
+                                <Badge
+                                  variant="outline"
+                                  className={`
+                                    ${
+                                      project.status === "COMPLETED" ||
+                                      project.status === "DEPLOYED" ||
+                                      project.status === "RELEASED"
+                                        ? "text-primary border-primary"
+                                        : project.status === "IN DEVELOPMENT" || project.status === "ONGOING"
+                                          ? "text-secondary border-secondary"
+                                          : "text-accent border-accent"
+                                    }
+                                  `}
+                                >
+                                  {project.status}
+                                </Badge>
+                              </div>
+                            </CardHeader>
+                            <CardContent>
+                              <p className="text-foreground text-sm mb-4">{project.description}</p>
+                              <div className="space-y-2">
+                                <div className="text-xs text-muted-foreground">TECH STACK:</div>
+                                <div className="flex flex-wrap gap-1">
+                                  {project.tech.map((tech, techIndex) => (
+                                    <Badge
+                                      key={techIndex}
+                                      variant="outline"
+                                      className="text-xs text-accent border-accent"
+                                    >
+                                      {tech}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
                     </div>
+                  )}
+                </div>
+              )}
+
+              {/* BLOGS LEVEL */}
+              {gameState === "blogs" && (
+                <div className="container mx-auto px-4 py-12 max-w-6xl">
+                  <div className="text-center mb-12">
+                    <h2 className="text-3xl font-bold text-primary mb-4">BLOG_ARCHIVE.SYS</h2>
+                    <div className="text-muted-foreground">Latest thoughts and insights on tech and development</div>
                   </div>
 
-                  {/* Contact Info Box */}
-                  <div className="card-game p-4 sm:p-6">
-                    <div className="text-primary font-bold mb-4 text-base sm:text-lg">Contact Information</div>
-                    <div className="space-y-3 sm:space-y-4">
-                      <div className="flex items-center gap-2">
-                        <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                        <a href="mailto:yurajsharmaa2022@gmail.com" className="text-sm sm:text-base hover:text-primary transition-colors">
-                          yurajsharmaa2022@gmail.com
-                        </a>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Blog Post 1 */}
+                    <Card className="card-game hover:border-primary transition-colors">
+                      <CardHeader>
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="text-primary text-lg">The Future of AR in Architecture</CardTitle>
+                          <Badge variant="outline" className="text-secondary border-secondary">
+                            AR/VR
+                          </Badge>
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-2">Published: March 15, 2024</div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-foreground text-sm mb-4">
+                          Exploring how augmented reality is revolutionizing architectural visualization and client presentations...
+                        </p>
+                        <GameButton
+                          onClick={() => window.open("/blog/ar-architecture")}
+                          variant="secondary"
+                          className="w-full"
+                        >
+                          READ MORE
+                        </GameButton>
+                      </CardContent>
+                    </Card>
+
+                    {/* Blog Post 2 */}
+                    <Card className="card-game hover:border-primary transition-colors">
+                      <CardHeader>
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="text-primary text-lg">Game Development with Godot</CardTitle>
+                          <Badge variant="outline" className="text-secondary border-secondary">
+                            GAME DEV
+                          </Badge>
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-2">Published: March 10, 2024</div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-foreground text-sm mb-4">
+                          A deep dive into why Godot is becoming a popular choice for indie game developers...
+                        </p>
+                        <GameButton
+                          onClick={() => window.open("/blog/godot-game-dev")}
+                          variant="secondary"
+                          className="w-full"
+                        >
+                          READ MORE
+                        </GameButton>
+                      </CardContent>
+                    </Card>
+
+                    {/* Blog Post 3 */}
+                    <Card className="card-game hover:border-primary transition-colors">
+                      <CardHeader>
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="text-primary text-lg">Web3 in Gaming: The Next Frontier</CardTitle>
+                          <Badge variant="outline" className="text-secondary border-secondary">
+                            WEB3
+                          </Badge>
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-2">Published: March 5, 2024</div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-foreground text-sm mb-4">
+                          How blockchain technology is transforming the gaming industry and player ownership...
+                        </p>
+                        <GameButton
+                          onClick={() => window.open("/blog/web3-gaming")}
+                          variant="secondary"
+                          className="w-full"
+                        >
+                          READ MORE
+                        </GameButton>
+                      </CardContent>
+                    </Card>
+
+                    {/* Blog Post 4 */}
+                    <Card className="card-game hover:border-primary transition-colors">
+                      <CardHeader>
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="text-primary text-lg">Building XR Experiences with Unity</CardTitle>
+                          <Badge variant="outline" className="text-secondary border-secondary">
+                            XR DEV
+                          </Badge>
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-2">Published: February 28, 2024</div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-foreground text-sm mb-4">
+                          Best practices and tips for creating immersive XR experiences using Unity...
+                        </p>
+                        <GameButton
+                          onClick={() => window.open("/blog/unity-xr")}
+                          variant="secondary"
+                          className="w-full"
+                        >
+                          READ MORE
+                        </GameButton>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              )}
+
+              {/* CONTACT LEVEL */}
+              {gameState === "contact" && (
+                <div className="container mx-auto px-4 py-6 sm:py-12 max-w-4xl relative z-10">
+                  <div className="text-center mb-6 sm:mb-12">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-primary mb-4">MESSAGE_TERMINAL.SYS</h2>
+                  </div>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+                    {/* Contact Form Box */}
+                    <div className="card-game no-anim p-6 sm:p-8 flex flex-col justify-between relative z-20">
+                      <div>
+                        <div className="text-primary font-bold mb-4 text-lg sm:text-xl">Contact Directly</div>
+                        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 relative z-30">
+                          <div className="relative z-30">
+                            <label htmlFor="name" className="block text-sm font-medium text-gray-200 mb-2">Name</label>
+                            <input
+                              id="name"
+                              type="text"
+                              name="name"
+                              value={formData.name}
+                              onChange={handleInputChange}
+                              placeholder="Your Name"
+                              className="w-full p-3 text-base rounded bg-background border border-gray-700 relative z-30
+                                focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
+                                hover:border-primary/50 transition-colors duration-200 text-gray-100"
+                              required
+                              aria-required="true"
+                              aria-invalid={!!formErrors.name}
+                              aria-describedby={formErrors.name ? "name-error" : undefined}
+                            />
+                            {formErrors.name && (
+                              <p id="name-error" className="text-red-500 text-sm mt-1" role="alert">{formErrors.name}</p>
+                            )}
+                          </div>
+                          <div className="relative z-30">
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">Email</label>
+                            <input
+                              id="email"
+                              type="email"
+                              name="email"
+                              value={formData.email}
+                              onChange={handleInputChange}
+                              placeholder="Your Email"
+                              className="w-full p-3 text-base rounded bg-background border border-gray-700 relative z-30
+                                focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
+                                hover:border-primary/50 transition-colors duration-200 text-gray-100"
+                              required
+                              aria-required="true"
+                              aria-invalid={!!formErrors.email}
+                              aria-describedby={formErrors.email ? "email-error" : undefined}
+                            />
+                            {formErrors.email && (
+                              <p id="email-error" className="text-red-500 text-sm mt-1" role="alert">{formErrors.email}</p>
+                            )}
+                          </div>
+                          <div className="relative z-30">
+                            <label htmlFor="message" className="block text-sm font-medium text-gray-200 mb-2">Message</label>
+                            <textarea
+                              id="message"
+                              name="message"
+                              value={formData.message}
+                              onChange={handleInputChange}
+                              placeholder="Type your message..."
+                              rows={4}
+                              className="w-full p-3 text-base rounded bg-background border border-gray-700 relative z-30
+                                focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
+                                hover:border-primary/50 transition-colors duration-200 text-gray-100 resize-none"
+                              required
+                              aria-required="true"
+                              aria-invalid={!!formErrors.message}
+                              aria-describedby={formErrors.message ? "message-error" : undefined}
+                            />
+                            {formErrors.message && (
+                              <p id="message-error" className="text-red-500 text-sm mt-1" role="alert">{formErrors.message}</p>
+                            )}
+                          </div>
+                          <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="rpg-button bg-primary text-background hover:bg-primary/80 w-full mt-4 text-base py-3 relative z-30
+                              focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+                              disabled:opacity-50 disabled:cursor-not-allowed
+                              transition-all duration-200 font-medium"
+                            aria-disabled={isSubmitting}
+                          >
+                            {isSubmitting ? 'Sending...' : 'Send Message'}
+                          </button>
+                          {submitStatus === 'success' && (
+                            <p className="text-green-500 text-sm mt-2" role="alert">Message sent successfully!</p>
+                          )}
+                          {submitStatus === 'error' && (
+                            <p className="text-red-500 text-sm mt-2" role="alert">Failed to send message. Please try again.</p>
+                          )}
+                        </form>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Github className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                        <a href="https://github.com/yuvrajsharmaaa" target="_blank" rel="noopener noreferrer" className="text-sm sm:text-base hover:text-primary transition-colors">
-                          github.com/yuvrajsharmaaa
-                        </a>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Linkedin className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                        <a href="https://linkedin.com/in/yuvrajsharma03" target="_blank" rel="noopener noreferrer" className="text-sm sm:text-base hover:text-primary transition-colors">
-                          linkedin.com/in/yuvrajsharma03
-                        </a>
+                    </div>
+
+                    {/* Contact Info Box */}
+                    <div className="card-game no-anim p-6 sm:p-8 flex flex-col justify-between relative z-20">
+                      <div>
+                        <div className="text-primary font-bold mb-4 text-lg sm:text-xl">Connect With Me</div>
+                        <div className="space-y-4">
+                          <a
+                            href="https://github.com/yuvrajsharmaaa"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              window.open("https://github.com/yuvrajsharmaaa", "_blank");
+                            }}
+                            className="flex items-center space-x-3 p-3 rounded-lg bg-background/50 hover:bg-background/80 transition-colors duration-200 cursor-pointer active:scale-95"
+                          >
+                            <Github className="w-6 h-6 text-primary" />
+                            <span className="text-gray-200">GitHub</span>
+                          </a>
+                          <a
+                            href="https://linkedin.com/in/yuvrajsharma03"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              window.open("https://linkedin.com/in/yuvrajsharma03", "_blank");
+                            }}
+                            className="flex items-center space-x-3 p-3 rounded-lg bg-background/50 hover:bg-background/80 transition-colors duration-200 cursor-pointer active:scale-95"
+                          >
+                            <Linkedin className="w-6 h-6 text-primary" />
+                            <span className="text-gray-200">LinkedIn</span>
+                          </a>
+                          <a
+                            href="mailto:yurajsharmaa2022@gmail.com"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              window.location.href = "mailto:yurajsharmaa2022@gmail.com";
+                            }}
+                            className="flex items-center space-x-3 p-3 rounded-lg bg-background/50 hover:bg-background/80 transition-colors duration-200 cursor-pointer active:scale-95"
+                          >
+                            <Mail className="w-6 h-6 text-primary" />
+                            <span className="text-gray-200">Email</span>
+                          </a>
+                          <a
+                            href="/YuvrajSharma_resume.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              window.open("/YuvrajSharma_resume.pdf", "_blank");
+                            }}
+                            className="flex items-center space-x-3 p-3 rounded-lg bg-background/50 hover:bg-background/80 transition-colors duration-200 cursor-pointer active:scale-95"
+                          >
+                            <Download className="w-6 h-6 text-primary" />
+                            <span className="text-gray-200">Download Resume</span>
+                          </a>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
