@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import emailjs from '@emailjs/browser'
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -15,24 +16,22 @@ export default function ContactForm() {
     setStatus('sending')
 
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      await emailjs.send(
+        'YOUR_SERVICE_ID', // Replace with your EmailJS service ID
+        'YOUR_TEMPLATE_ID', // Replace with your EmailJS template ID
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          message: formData.message,
+          to_email: 'yuvrajsharmaa2022@gmail.com',
         },
-        body: JSON.stringify({
-          ...formData,
-          to: 'yuvrajsharmaa2022@gmail.com'
-        }),
-      })
+        'YOUR_PUBLIC_KEY' // Replace with your EmailJS public key
+      )
 
-      if (response.ok) {
-        setStatus('success')
-        setFormData({ name: '', email: '', message: '' })
-      } else {
-        setStatus('error')
-      }
+      setStatus('success')
+      setFormData({ name: '', email: '', message: '' })
     } catch (error) {
+      console.error('Error sending email:', error)
       setStatus('error')
     }
   }

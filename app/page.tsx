@@ -1128,20 +1128,20 @@ export default function GamePortfolio() {
                     <div className="space-y-3 sm:space-y-4">
                       <div className="flex items-center gap-2">
                         <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                        <a href="mailto:your.email@example.com" className="text-sm sm:text-base hover:text-primary transition-colors">
-                          your.email@example.com
+                        <a href="mailto:yurajsharmaa2022@gmail.com" className="text-sm sm:text-base hover:text-primary transition-colors">
+                          yurajsharmaa2022@gmail.com
                         </a>
                       </div>
                       <div className="flex items-center gap-2">
                         <Github className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                        <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" className="text-sm sm:text-base hover:text-primary transition-colors">
-                          github.com/yourusername
+                        <a href="https://github.com/yuvrajsharmaaa" target="_blank" rel="noopener noreferrer" className="text-sm sm:text-base hover:text-primary transition-colors">
+                          github.com/yuvrajsharmaaa
                         </a>
                       </div>
                       <div className="flex items-center gap-2">
                         <Linkedin className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                        <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener noreferrer" className="text-sm sm:text-base hover:text-primary transition-colors">
-                          linkedin.com/in/yourusername
+                        <a href="https://linkedin.com/in/yuvrajsharma03" target="_blank" rel="noopener noreferrer" className="text-sm sm:text-base hover:text-primary transition-colors">
+                          linkedin.com/in/yuvrajsharma03
                         </a>
                       </div>
                     </div>
