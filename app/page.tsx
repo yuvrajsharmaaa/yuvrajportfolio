@@ -1207,12 +1207,12 @@ export default function GamePortfolio() {
                             <span className="text-gray-200">Email</span>
                           </a>
                           <a
-                            href="https://drive.google.com/uc?export=download&id=1WttrG96hfK6iGvyAfoXs1iCtwB0Ee43S"
+                            href="/Resume_Yuvraj.pdf"
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => {
                               e.preventDefault();
-                              window.open("https://drive.google.com/uc?export=download&id=1WttrG96hfK6iGvyAfoXs1iCtwB0Ee43S", "_blank");
+                              window.open("https://drive.google.com/file/d/1ASJssKE65NZqnEdDa_y2FHXcgVfayguD/view?usp=sharing", "_blank");
                             }}
                             className="flex items-center space-x-3 p-3 rounded-lg bg-background/50 hover:bg-background/80 transition-colors duration-200 cursor-pointer active:scale-95"
                           >
