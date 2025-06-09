@@ -1212,7 +1212,7 @@ export default function GamePortfolio() {
                             rel="noopener noreferrer"
                             onClick={(e) => {
                               e.preventDefault();
-                              window.open("https://drive.google.com/file/d/1UZn7y5_I7VuoeKPni0_bncbevP_Q4y_b/view?usp=sharing", "_blank");
+                              window.open("https://drive.google.com/file/d/1vStGUMYKReOQ1yLSuWAI8nOL0ksovLbW/view?usp=sharing", "_blank");
                             }}
                             className="flex items-center space-x-3 p-3 rounded-lg bg-background/50 hover:bg-background/80 transition-colors duration-200 cursor-pointer active:scale-95"
                           >
