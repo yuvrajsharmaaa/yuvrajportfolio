@@ -1207,7 +1207,8 @@ export default function GamePortfolio() {
                             <span className="text-gray-200">Email</span>
                           </a>
                           <a
-                            href="/YuvrajSharma_resume.pdf"
+                            href="/Yuvrajsharma_Resume.pdf"
+                            download="Yuvrajsharma_Resume.pdf"
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => {
