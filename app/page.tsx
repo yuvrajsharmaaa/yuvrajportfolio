@@ -536,9 +536,9 @@ export default function GamePortfolio() {
             <div className="text-center max-w-2xl w-full mx-auto p-4 sm:p-8 flex flex-col items-center justify-center">
               <div className="mb-8 w-full">
                 <div className="text-primary text-6xl mb-4 text-glow">◤◢◤◢◤◢◤◢◤◢</div>
-                <h1 className="text-4xl md:text-6xl font-bold mb-4 text-primary text-glow backdrop-blur-sm">YUVRAJ.EXE</h1>
-                <div className="text-xl text-secondary mb-2 text-glow">XR & GAME DEVELOPER</div>
-                <div className="text-sm text-muted-foreground mb-8">ARCHITECTURE-XR-GAMEDEV-WEB3</div>
+                <h1 className="text-4xl md:text-6xl font-bold mb-4 text-primary text-glow backdrop-blur-sm">Yuvraj Sharma</h1>
+                <div className="text-xl text-secondary mb-2 text-glow">Full-Stack Developer</div>
+                <div className="text-sm text-muted-foreground mb-8">Specializing in Web, XR, and Interactive Tech</div>
               </div>
               <div className="space-y-4 w-full flex flex-col items-center">
                 <GameButton
@@ -599,10 +599,10 @@ export default function GamePortfolio() {
                         <h1 className="text-4xl md:text-5xl font-bold text-primary mb-4 text-glow">
                           <span className="text-secondary">[</span>YUVRAJ SHARMA<span className="text-secondary">]</span>
                         </h1>
-                        <div className="text-xl text-secondary mb-2">XR & GAME DEVELOPER</div>
+                        <div className="text-xl text-secondary mb-2">Full-Stack Developer</div>
                         <div className="text-sm text-muted-foreground leading-relaxed">
-                          Crafting immersive experiences at the intersection of technology and creativity.
-                          Specializing in AR/VR development, game design, and interactive digital solutions.
+                          Building robust, scalable, and interactive web applications with a passion for immersive tech. <br />
+                          Specializing in full-stack development, XR (AR/VR), and creative digital solutions that bridge technology and user experience.
                         </div>
                       </div>
 
@@ -639,39 +639,39 @@ export default function GamePortfolio() {
                       <div className="text-primary font-bold mb-6 text-center text-xl">EXPERTISE</div>
                       <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <div className="text-secondary text-sm">AR/VR DEVELOPMENT</div>
+                          <div className="text-secondary text-sm">FULL-STACK DEVELOPMENT</div>
                           <div className="text-xs text-muted-foreground">
-                            • Unity & Unreal Engine
-                            <br />• ARKit & ARCore
-                            <br />• 3D Modeling
-                            <br />• Spatial Computing
+                            • React, Next.js, Node.js<br />
+                            • REST & GraphQL APIs<br />
+                            • Database Design (SQL/NoSQL)<br />
+                            • DevOps & Cloud
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="text-secondary text-sm">XR & INTERACTIVE TECH</div>
+                          <div className="text-xs text-muted-foreground">
+                            • Unity & Unreal Engine<br />
+                            • ARKit & ARCore<br />
+                            • 3D Web (Three.js, WebXR)<br />
+                            • Spatial Computing
                           </div>
                         </div>
                         <div className="space-y-2">
                           <div className="text-secondary text-sm">GAME DEVELOPMENT</div>
                           <div className="text-xs text-muted-foreground">
-                            • Game Design
-                            <br />• C# & C++
-                            <br />• Godot Engine
-                            <br />• Game Mechanics
+                            • Game Design<br />
+                            • C# & C++<br />
+                            • Godot Engine<br />
+                            • Game Mechanics
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <div className="text-secondary text-sm">WEB3 & BLOCKCHAIN</div>
+                          <div className="text-secondary text-sm">WEB3 & SOFTWARE ENGINEERING</div>
                           <div className="text-xs text-muted-foreground">
-                            • Smart Contracts
-                            <br />• DApp Development
-                            <br />• NFT Integration
-                            <br />• Web3 Architecture
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <div className="text-secondary text-sm">SOFTWARE ENGINEERING</div>
-                          <div className="text-xs text-muted-foreground">
-                            • Full-Stack Development
-                            <br />• Python & JavaScript
-                            <br />• System Architecture
-                            <br />• API Design
+                            • Smart Contracts<br />
+                            • DApp Development<br />
+                            • Python & JavaScript<br />
+                            • System Architecture
                           </div>
                         </div>
                       </div>
