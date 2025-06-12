@@ -637,7 +637,7 @@ export default function GamePortfolio() {
                     {/* Right Column - Stats Card */}
                     <div className="card-game p-6 backdrop-blur-md">
                       <div className="text-primary font-bold mb-6 text-center text-xl">EXPERTISE</div>
-                      <div className="grid grid-cols-2 gap-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div className="space-y-2">
                           <div className="text-secondary text-sm">FULL-STACK DEVELOPMENT</div>
                           <div className="text-xs text-muted-foreground">
@@ -684,7 +684,7 @@ export default function GamePortfolio() {
               {gameState === "about" && (
                 <div className="container mx-auto px-4 py-12 max-w-5xl">
                   <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold text-primary mb-4">CHARACTER_PROFILE.DAT</h2>
+                    <h2 className="text-3xl font-bold text-primary mb-4">ABOUT ME</h2>
                   </div>
                   <div className="grid lg:grid-cols-3 gap-8">
                     {/* XR Developer Class */}
@@ -736,7 +736,7 @@ export default function GamePortfolio() {
                   <div className="mt-12 text-center">
                     <DialogueBox
                       character="SYSTEM"
-                      message={`PLAYER PROFILE:\nClass: Hybrid Explorer\nTraits: Curious, Builder, Dreamer\n---\n"Euphoria isn't a big revelation. It's the quiet joy of building, learning, and imagining new worlds.\nDrawn to XR, games, and tech by curiosity and hands-on play.\nOffline: VR diving, hackathons, lifting, or binge-watching building breakdowns.\nBelieves in: Collaborate, create, leave a mark.\nIf our quests align, let's team up and make something legendary."`}
+                      message={`I love building real-world solutions to real-world problems by working with the help of AI, mixed reality, and game development. Quite passionate about creating meaningful products, you'll always find me working in collaborative teams, pushing boundaries, and giving everything I've got to the work I do.`}
                       showNext={false}
                     />
                   </div>
