@@ -601,8 +601,8 @@ export default function GamePortfolio() {
                         </h1>
                         <div className="text-xl text-secondary mb-2">Full-Stack Developer</div>
                         <div className="text-sm text-muted-foreground leading-relaxed">
-                          Building robust, scalable, and interactive web applications with a passion for immersive tech. <br />
-                          Specializing in full-stack development, XR (AR/VR), and creative digital solutions that bridge technology and user experience.
+                        I love building real-world solutions to real-world problems by working with the help of AI, mixed reality, and game development. <br />
+                        Quite passionate about creating meaningful products, you'll always find me working in collaborative teams, pushing boundaries, and giving everything I've got to the work I do.
                         </div>
                       </div>
 
@@ -736,7 +736,15 @@ export default function GamePortfolio() {
                   <div className="mt-12 text-center">
                     <DialogueBox
                       character="SYSTEM"
-                      message={`I love building real-world solutions to real-world problems by working with the help of AI, mixed reality, and game development. Quite passionate about creating meaningful products, you'll always find me working in collaborative teams, pushing boundaries, and giving everything I've got to the work I do.`}
+                      message={`PLAYER PROFILE:
+Class: Hybrid Explorer
+Traits: Curious, Builder, Dreamer
+---
+"Euphoria isn't a big revelation. It's the quiet joy of building, learning, and imagining new worlds.
+Drawn to XR, games, and tech by curiosity and hands-on play.
+Offline: VR diving, hackathons, lifting, or binge-watching building breakdowns.
+Believes in: Collaborate, create, leave a mark.
+If our quests align, let's team up and make something legendary."`}
                       showNext={false}
                     />
                   </div>
